@@ -9,7 +9,8 @@ import { useEffect, useRef } from "react";
 export const OlOSMLayer = ({
    opacity,
    map,
-   order
+   order,
+   active
 }: OlLayerProp & {
    opacity?: number
 }) => {
@@ -33,6 +34,12 @@ export const OlOSMLayer = ({
          layerRef.current?.setZIndex(order);
       }
    }, [order]);
+
+   useEffect(() => {
+      if (active != undefined) {
+         layerRef.current?.setVisible(active);
+      }
+   }, [active]);
 
    return <></>;
 };

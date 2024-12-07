@@ -76,7 +76,7 @@ export default function Home() {
         </div>
         <div className='map-container'>
           <OlMap id='map' className='map'>
-            {layers.map(layer => layer.active ? { ...layer.olLayer, props: { ...layer.olLayer.props, order: layer.index } } : <OlEmptyLayer key={layer.olLayer.key} order={layer.index} />)}
+            {layers.map(layer => ({ ...layer.olLayer, props: { ...layer.olLayer.props, order: layer.index, active: layer.active } }))}
             <OlRouteLayer />
           </OlMap>
           <div className='map-overlay'>

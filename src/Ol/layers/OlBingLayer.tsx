@@ -9,7 +9,8 @@ import { useEffect, useRef } from "react";
 export const OlBingLayer = ({
    opacity,
    map,
-   order
+   order,
+   active
 }: OlLayerProp & {
    opacity?: number
 }) => {
@@ -36,6 +37,12 @@ export const OlBingLayer = ({
          layerRef.current?.setZIndex(order);
       }
    }, [order]);
+
+   useEffect(() => {
+      if (active != undefined) {
+         layerRef.current?.setVisible(active);
+      }
+   }, [active]);
 
    return <></>;
 };

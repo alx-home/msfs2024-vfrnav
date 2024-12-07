@@ -18,7 +18,8 @@ export const OlWMTSLayer = ({
    style,
    wrapX,
    map,
-   order
+   order,
+   active
 }: {
    opacity?: number,
    url: string,
@@ -66,6 +67,12 @@ export const OlWMTSLayer = ({
          layerRef.current?.setZIndex(order);
       }
    }, [order]);
+
+   useEffect(() => {
+      if (active != undefined) {
+         layerRef.current?.setVisible(active);
+      }
+   }, [active]);
 
    return <></>;
 };
