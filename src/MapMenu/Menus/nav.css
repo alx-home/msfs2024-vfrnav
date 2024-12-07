@@ -1,0 +1,13 @@
+p {
+   margin-top: 10px;
+   margin-bottom: 10px;
+   padding: 10px;
+}
+
+p:hover {
+   background-color: var(--item-color-hover);
+}
+
+p:active {
+   background-color: var(--item-color-active);
+}

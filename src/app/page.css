@@ -57,3 +57,7 @@
 .menu:first-child {
    padding-top: 20px;
 }
+
+h1 {
+   font-size: x-large;
+}

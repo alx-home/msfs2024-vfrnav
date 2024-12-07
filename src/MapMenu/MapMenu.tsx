@@ -1,10 +1,10 @@
-import { Dispatch, FC, KeyboardEvent, MouseEvent, SetStateAction, useContext, useEffect, useState } from 'react';
+import { Dispatch, FC, KeyboardEvent, SetStateAction, useContext, useEffect, useState } from 'react';
 import '@/MapMenu/map-menu.css'
 import useMouseMove from '@/Events/MouseMove';
 import useMouseRelease from '@/Events/MouseRelease';
 import { MouseContext } from '@/Events/MouseContext';
-import { Layer, Layers, OnLayerChange } from './Layers';
-import { Nav } from './Nav';
+import { Layer, Layers, OnLayerChange } from './Menus/Layers';
+import { Nav } from './Menus/Nav';
 
 export enum Menu { layers, nav };
 
@@ -16,7 +16,7 @@ export const MapMenu: FC<{ open: boolean, setOpen: Dispatch<SetStateAction<boole
       const [cursorOut, setCursorOut] = useState(false);
       const mousePosition = useMouseMove();
       const mouseUp = useMouseRelease();
-      const { cursorType, cursorChangeHandler } = useContext(MouseContext);
+      const { cursorChangeHandler } = useContext(MouseContext);
       const closeWidth = 40;
       const minWidth = 100;
       const maxWidth = 250;

@@ -1,12 +1,11 @@
 import { Draggable } from "@/Utils/Draggable";
-import { ACTION_SERVER_ACTION } from "next/dist/client/components/router-reducer/router-reducer-types";
-import { Children, PropsWithChildren, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export class Layer {
    constructor(public src: string, public alt: string) { }
 };
 
-const LayerComp = ({ children, src, alt, onActiveChange }: PropsWithChildren<Layer & { onActiveChange: (active: boolean) => void }>) => {
+const LayerComp = ({ src, alt, onActiveChange }: Layer & { onActiveChange: (active: boolean) => void }) => {
    const [active, setActive] = useState<boolean>(true);
 
    useEffect(() => onActiveChange(active), [active]);
@@ -20,9 +19,9 @@ export type OnLayerChange = (layers: { index: number, order?: number, active?: b
 
 export const Layers = ({ layers, onLayerChange }: { layers: Layer[], onLayerChange: OnLayerChange }) => {
    return <>
-      <p>
-         layers
-      </p>
+      <h1>
+         Layers
+      </h1>
       <Draggable
          vertical={true}
          onOrdersChange={(orders: number[]) => {
