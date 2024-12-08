@@ -8,15 +8,21 @@ import { OlMap } from '../Ol/OlMap';
 import { OlWMTSLayer } from '@/Ol/layers/OlWMTSLayer';
 import { OlRouteLayer } from '@/Ol/layers/OlRoute';
 
-import "./ol.css";
 import { MapMenu, Menu } from '@/MapMenu/MapMenu';
 import { useState } from 'react';
 
-import '@/app/page.css'
 import MouseContextProvider from '@/Events/MouseContext';
 import { OlOSMLayer } from '@/Ol/layers/OlOSMLayer';
 import { OlBingLayer } from '@/Ol/layers/OlBingLayer';
-import { OlEmptyLayer } from '@/Ol/layers/OlEmpty';
+
+
+import flightPlanImg from '@/../public/flight-plan.svg';
+import layersImg from '@/../public/layers.svg';
+import mapImg from '@/../public/map.svg';
+
+import "./ol.css";
+import '@/app/page.css'
+import Image from 'next/image';
 
 const projection = getProjection('EPSG:3857')!;
 const projectionExtent = projection.getExtent();
@@ -70,9 +76,9 @@ export default function Home() {
     <MouseContextProvider>
       <div className='Home'>
         <div className='menu'>
-          <img src='/map.svg' alt='map' />
-          <img src='/map.svg' alt='map' />
-          <img src='/map.svg' alt='map' />
+          <Image src={mapImg} alt='map' />
+          <Image src={mapImg} alt='map' />
+          <Image src={mapImg} alt='map' />
         </div>
         <div className='map-container'>
           <OlMap id='map' className='map'>
@@ -82,10 +88,10 @@ export default function Home() {
           <div className='map-overlay'>
             <div className='map-menu'>
               <div onClick={() => { setOpen(open => menu != Menu.layers ? true : !open); setMenu(Menu.layers); }}>
-                <img src='/layers.svg' alt='layers' />
+                <Image src={layersImg} alt='layers' />
               </div>
               <div onClick={() => { setOpen(open => menu != Menu.nav ? true : !open); setMenu(Menu.nav); }}>
-                <img src='/flight-plan.svg' alt='flight plan' />
+                <Image src={flightPlanImg} alt='flight plan' />
               </div>
             </div>
             <MapMenu open={open} setOpen={setOpen} menu={menu} layers={layers}

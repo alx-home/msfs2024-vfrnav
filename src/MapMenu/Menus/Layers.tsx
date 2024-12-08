@@ -1,6 +1,8 @@
 import { Draggable } from "@/Utils/Draggable";
 import { useEffect, useState } from "react";
 
+import Image from "next/image";
+
 export class Layer {
    constructor(public src: string, public alt: string, public order: number) { }
 };
@@ -11,7 +13,7 @@ const LayerComp = ({ src, alt, onActiveChange }: Layer & { onActiveChange: (acti
    useEffect(() => onActiveChange(active), [active]);
 
    return <button onClick={e => setActive(active => !active)}>
-      <img src={src} alt={alt} {...(active ? { className: 'active-layer' } : {})} />
+      <Image width={200} height={200} src={src} alt={alt} {...(active ? { className: 'active-layer' } : {})} />
    </button>;
 };
 
