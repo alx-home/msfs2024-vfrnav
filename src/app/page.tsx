@@ -62,7 +62,7 @@ export default function Home() {
     }
   ].map((elem, index) => ({
     ...elem,
-    index: index,
+    order: index,
     active: true
   })));
 
@@ -76,7 +76,7 @@ export default function Home() {
         </div>
         <div className='map-container'>
           <OlMap id='map' className='map'>
-            {layers.map(layer => ({ ...layer.olLayer, props: { ...layer.olLayer.props, order: layer.index, active: layer.active } }))}
+            {layers.map(layer => ({ ...layer.olLayer, props: { ...layer.olLayer.props, order: layer.order, active: layer.active } }))}
             <OlRouteLayer />
           </OlMap>
           <div className='map-overlay'>
@@ -95,7 +95,7 @@ export default function Home() {
 
                   values.forEach(elem => {
                     if (elem.order != undefined) {
-                      newLayers[elem.index].index = elem.order;
+                      newLayers[elem.index].order = elem.order;
                     }
                     if (elem.active != undefined) {
                       newLayers[elem.index].active = elem.active;

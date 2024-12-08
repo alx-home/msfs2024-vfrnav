@@ -1,4 +1,4 @@
-import { PropsWithChildren, Children, useState, useEffect, useRef } from 'react';
+import { PropsWithChildren, Children, useState, useEffect, useRef, isValidElement } from 'react';
 
 import '@/Utils/style.css';
 import { AnimatedOrder } from './AnimatedOrder';
@@ -16,7 +16,7 @@ export const Draggable = ({ children, vertical, onOrdersChange }: PropsWithChild
    const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
    const [boundings, setBoundings] = useState<Box[]>();
    const dragRef = useRef<HTMLDivElement | null>();
-   const [orders, setOrders] = useState<number[]>();
+   const [orders, setOrders] = useState<number[]>(Children.map(children, (child, index) => isValidElement(child) ? child.props.order : index) ?? []);
 
    const getOrder = (index: number, orders_: number[] | undefined = orders) => orders_?.[index] ?? index;
    const getIndex = (order: number, orders_: number[] | undefined = orders) => orders_?.findIndex((value) => value == order) ?? order;
@@ -101,7 +101,7 @@ export const Draggable = ({ children, vertical, onOrdersChange }: PropsWithChild
    };
 
    return <div className='drag-container'>
-      <AnimatedOrder orders={orders ?? [...(Children.map(children, (_child, index) => index) ?? [])]} itemsRef={itemsRef} vertical={vertical}>
+      <AnimatedOrder orders={orders} itemsRef={itemsRef} vertical={vertical}>
          {
             Children.map(children, (child, index) => {
                return <div role="menuitem"
