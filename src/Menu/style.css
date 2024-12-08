@@ -1,0 +1,44 @@
+.menu {
+   width: 60px;
+   background-color: var(--menu-color);
+   align-items: center;
+}
+
+.menu>* {
+   transition: background-color 0.2s;
+   margin: 3px;
+   margin-right: 7px;
+   margin-left: 7px;
+   width: 46px;
+   height: 38px;
+   border-left: var(--border-size) solid var(--active-item-color);
+   background-color: var(--item-color);
+}
+
+.menu>*:hover {
+   background-color: var(--item-color-hover);
+}
+
+.menu>*:active {
+   background-color: var(--item-color-active);
+}
+
+.menu:first-child {
+   padding-top: 50px;
+}
+
+.menu > * > img {
+   display: block;
+   margin-left: auto;
+   margin-right: auto;
+   width: 30px;
+   filter: invert(61%) sepia(59%) saturate(176%) hue-rotate(169deg) brightness(79%) contrast(83%);
+}
+
+.menu>*:hover > img {
+   filter: sepia(0%) saturate(5277%) hue-rotate(174deg) brightness(102%) contrast(104%);
+}
+
+.menu>*:active > img {
+   filter: invert(27%) sepia(9%) saturate(1612%) hue-rotate(168deg) brightness(0%) contrast(82%);
+}

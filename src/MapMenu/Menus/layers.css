@@ -1,0 +1,50 @@
+.drag-container>*>* {
+   padding: 5px;
+   width: 100%;
+   overflow: hidden;
+   container: layers / inline-size;
+}
+
+.drag-container > *:first-child {
+   margin-top: 10px;
+}
+
+.drag-container>*>*>img {
+   padding-left: 5px;
+   display: block;
+   margin-left: auto;
+   margin-right: auto;
+   transition: width 0.1s, height 0.1s;
+}
+
+.drag-container>*>*>img:not(.active-layer) {
+   border-left: rgba(0, 0, 0, 0) solid var(--border-size);
+}
+
+.drag-container>*>*>img:hover:not(.active-layer) {
+   border-left: var(--inactive-item-color) solid var(--border-size);
+}
+
+.active-layer {
+   border-left: var(--active-item-color) solid var(--border-size);
+}
+
+@container layers (min-width: 200px) {
+   img {
+      width: 180px;
+      height: 120px;
+   }
+}
+
+@container layers (min-width: 150px) and (max-width: 200px) {
+   img {
+      width: 120px;
+      height: 82px;
+   }
+}
+
+@container layers (max-width: 150px) {
+   img {
+      width: 80px;
+   }
+}

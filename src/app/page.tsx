@@ -1,118 +1,41 @@
 'use client'
 
-
-import { get as getProjection } from 'ol/proj.js';
-import { getTopLeft, getWidth } from 'ol/extent.js';
-
-import { OlMap } from '../Ol/OlMap';
-import { OlWMTSLayer } from '@/Ol/layers/OlWMTSLayer';
-import { OlRouteLayer } from '@/Ol/layers/OlRoute';
-
-import { MapMenu, Menu } from '@/MapMenu/MapMenu';
-import { useState } from 'react';
-
 import MouseContextProvider from '@/Events/MouseContext';
-import { OlOSMLayer } from '@/Ol/layers/OlOSMLayer';
-import { OlBingLayer } from '@/Ol/layers/OlBingLayer';
-
-
-import flightPlanImg from '@/../public/flight-plan.svg';
-import layersImg from '@/../public/layers.svg';
-import mapImg from '@/../public/map.svg';
 
 import "./ol.css";
 import '@/app/page.css'
-import Image from 'next/image';
+import { MapPage } from '@/MapPage/MapPage';
+import { Menu } from '@/Menu/Menu';
+import { useState } from 'react';
+import Image from "next/image";
 
-const projection = getProjection('EPSG:3857')!;
-const projectionExtent = projection.getExtent();
-const size = projectionExtent ? getWidth(projectionExtent) / 256 : 1;
-const resolutions = new Array(19);
-const matrixIds = new Array(19);
+import mapImg from '@/../public/map.svg';
+import settingsImg from '@/../public/settings.svg';
 
-for (let z = 0; z < 19; ++z) {
-  // generate resolutions and matrixIds arrays for this WMTS
-  resolutions[z] = size / Math.pow(2, z);
-  matrixIds[z] = z;
-}
+export class Page {
+  constructor(public readonly name: string, public readonly icon: JSX.Element, public readonly elem: JSX.Element) { }
+};
 
 export default function Home() {
-  const [open, setOpen] = useState(false);
-  const [menu, setMenu] = useState<Menu>(Menu.layers);
-  const [layers, setLayers] = useState([
+  const [page, setPage] = useState<string>("map");
+  const pages: Page[] = [
     {
-      olLayer: <OlWMTSLayer key="wmts"
-        opacity={1.0}
-        url={'https://data.geopf.fr/private/wmts?apikey=ign_scan_ws'}
-        layer={'GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-OACI'}
-        version={'1.0.0'}
-        projection={projection}
-        tileGrid={{
-          origin: getTopLeft(projectionExtent),
-          resolutions: resolutions,
-          matrixIds: matrixIds,
-        }}
-      />,
-      src: '/oaci.png',
-      alt: 'oaci layer'
+      name: "map",
+      icon: <Image src={mapImg} alt='map' />,
+      elem: <MapPage key="map" active={page == "map"} />
     },
     {
-      olLayer: <OlOSMLayer key="osm" />,
-      src: '/osm.png',
-      alt: 'osm layer'
-    },
-    {
-      olLayer: <OlBingLayer key="bing" />,
-      src: '/bing.png',
-      alt: 'bing layer'
+      name: "other",
+      icon: <Image src={settingsImg} alt='other' />,
+      elem: <div key="other" />
     }
-  ].map((elem, index) => ({
-    ...elem,
-    order: index,
-    active: true
-  })));
+  ];
 
   return (
     <MouseContextProvider>
       <div className='Home'>
-        <div className='menu'>
-          <Image src={mapImg} alt='map' />
-          <Image src={mapImg} alt='map' />
-          <Image src={mapImg} alt='map' />
-        </div>
-        <div className='map-container'>
-          <OlMap id='map' className='map'>
-            {layers.map(layer => ({ ...layer.olLayer, props: { ...layer.olLayer.props, order: layer.order, active: layer.active } }))}
-            <OlRouteLayer />
-          </OlMap>
-          <div className='map-overlay'>
-            <div className='map-menu'>
-              <div onClick={() => { setOpen(open => menu != Menu.layers ? true : !open); setMenu(Menu.layers); }}>
-                <Image src={layersImg} alt='layers' />
-              </div>
-              <div onClick={() => { setOpen(open => menu != Menu.nav ? true : !open); setMenu(Menu.nav); }}>
-                <Image src={flightPlanImg} alt='flight plan' />
-              </div>
-            </div>
-            <MapMenu open={open} setOpen={setOpen} menu={menu} layers={layers}
-              onLayerChange={(values) =>
-                setLayers(layers => {
-                  const newLayers = [...layers];
-
-                  values.forEach(elem => {
-                    if (elem.order != undefined) {
-                      newLayers[elem.index].order = elem.order;
-                    }
-                    if (elem.active != undefined) {
-                      newLayers[elem.index].active = elem.active;
-                    }
-                  });
-
-                  return newLayers;
-                })
-              } />
-          </div>
-        </div>
+        <Menu pages={pages} setPage={page => setPage(page)} />
+        {pages.map(elem => elem.elem)}
       </div>
     </MouseContextProvider>
   );

@@ -1,13 +1,125 @@
-p {
-   margin-top: 10px;
-   margin-bottom: 10px;
-   padding: 10px;
+span{
+   padding: 5px;
+   width: 100%;
+   overflow: hidden;
 }
 
-p:hover {
+.item, .add-item {
+   display: flex;
+   width: 100%;
+   margin-left: auto;
+   margin-right: auto;
+   flex-direction: row;
+}
+
+* > .item:first-child {
+   margin-top: 10px;
+}
+
+.item:hover,
+.add-item:hover,
+.item:has(>:focus),
+.item:has(* :focus) {
    background-color: var(--item-color-hover);
 }
 
-p:active {
+.item > button:active,
+.add-item>button:active {
    background-color: var(--item-color-active);
+}
+
+.active-nav {
+   border-left: var(--active-item-color) solid var(--border-size);
+}
+
+.item>button:hover:not(.active-nav) {
+   border-left: var(--inactive-item-color) solid var(--border-size);
+}
+
+menu {
+   display: flex;
+   flex-direction: column;
+}
+
+.item > button,
+input,
+.item-text {
+   flex-grow: 1;
+   padding: 10px;
+   container: nav-container / inline-size;
+   overflow: hidden;
+   height: 44px;
+}
+
+.add-item>button {
+   flex-grow: 1;
+   padding: 5px;
+}
+
+.item:not(:has(> .item-menu > button:focus)):not(:hover) > .item-menu {
+   width: 0;
+   opacity: 0;
+}
+
+.item-menu {
+   width: 80px;
+   display: flex;
+   flex-direction: row;
+   transition: width 200ms;
+}
+
+.item-menu > button {
+   width: 100%;
+   display: block;
+   margin-left: auto;
+   margin-right: auto;
+   padding: 10px;
+}
+
+.nav-shortName {
+   display: none;
+}
+
+@container nav-container (max-width: 80px) {
+   .nav-name {
+      display: none;
+   }
+
+   .nav-shortName {
+      display: block;
+   }
+}
+
+.delete {
+   background-color: red;
+}
+
+.delete:hover {
+   background-color: hsl(0, 100%, 70%);
+}
+
+.delete:active {
+   background-color: hsl(0, 100%, 30%);
+}
+
+.edit {
+   background-color: #1F81AB;
+}
+
+.edit:hover {
+   background-color: hsl(198, 69%, 60%);
+}
+
+.edit:active {
+   background-color: hsl(198, 69%, 20%);
+}
+
+input {
+   border: none;
+   overflow: hidden;
+   outline: none;
+   box-shadow: none;
+   background-color: transparent;
+   text-align: center;
+   width: 100%;
 }

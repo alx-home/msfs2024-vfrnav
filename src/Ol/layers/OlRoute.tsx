@@ -1,3 +1,5 @@
+'use client'
+
 import { OlLayerProp } from "./OlLayer";
 import VectorSource from "ol/source/Vector";
 import { Feature } from "ol";
@@ -12,16 +14,35 @@ import Stroke from "ol/style/Stroke";
 import { toContext } from "ol/render";
 import Fill from "ol/style/Fill";
 import { Coordinate } from "ol/coordinate";
-import { useEffect, useRef } from "react";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
 
 
 export const OlRouteLayer = ({
-   map
+   map,
+   addNav,
+   addFeature,
+   removeFeature,
+   onDrawEnd,
+   order
 }: {
+   addNav: MutableRefObject<(() => void) | undefined>,
+   addFeature: MutableRefObject<((feature: Feature) => void) | undefined>,
+   removeFeature: MutableRefObject<((feature: Feature) => void) | undefined>,
+   onDrawEnd: (feature: Feature, layer: VectorLayer) => void;
 } & OlLayerProp) => {
    const redMarker = useRef<HTMLImageElement>();
    const blueMarker = useRef<HTMLImageElement>();
    const greenMarker = useRef<HTMLImageElement>();
+   const [newFeatures, setNewFeatures] = useState<Feature[]>();
+   const drawRef = useRef<Draw>();
+   const layer = useRef<VectorLayer>();
+
+   useEffect(() => {
+      if (newFeatures) {
+         newFeatures.forEach(feature => onDrawEnd(feature, layer.current!));
+         setNewFeatures(undefined);
+      }
+   }, [newFeatures])
 
    useEffect(() => {
       {
@@ -58,7 +79,7 @@ export const OlRouteLayer = ({
          })
       });
 
-      const layer = new VectorLayer({
+      const layer_ = new VectorLayer({
          source: source,
          style: (feature: FeatureLike) => {
             const geom = feature.getGeometry();
@@ -104,27 +125,62 @@ export const OlRouteLayer = ({
          }
       });
 
-      // const draw = new Draw({
-      //    type: 'MultiLineString',
-      //    source: source
-      // });
+      layer.current = layer_;
+      if (order != undefined) {
+         layer.current?.setZIndex(order);
+      }
 
-      // const modify = new Modify({ source: source });
+      const modify = new Modify({ source: source });
+      const snap = new Snap({ source: source });
 
-      // const snap = new Snap({ source: source });
+      addNav.current = () => {
+         if (drawRef.current) {
+            map?.removeInteraction(drawRef.current);
+         }
 
-      // map?.addInteraction(draw);
-      // map?.addInteraction(modify);
-      // map?.addInteraction(snap);
-      map?.addLayer(layer);
+         const draw = new Draw({
+            type: 'MultiLineString',
+            source: source
+         });
+         drawRef.current = draw;
+         map?.addInteraction(draw);
+
+         draw.on('drawend', e => {
+            map?.removeInteraction(draw);
+            drawRef.current = undefined;
+
+            setNewFeatures(features => ([...(features ?? []), e.feature]));
+         });
+
+      };
+      addFeature.current = (feature: Feature) => {
+         if (!source.hasFeature(feature)) {
+            source.addFeature(feature);
+         }
+      };
+      removeFeature.current = (feature: Feature) => {
+         source.removeFeature(feature);
+      };
+
+      map?.addInteraction(modify);
+      map?.addInteraction(snap);
+      map?.addLayer(layer_);
 
       return () => {
-         // map?.removeInteraction(draw);
-         // map?.removeInteraction(modify);
-         // map?.removeInteraction(snap);
-         map?.removeLayer(layer);
+         map?.removeInteraction(modify);
+         map?.removeInteraction(snap);
+         if (drawRef.current) {
+            map?.removeInteraction(drawRef.current);
+         }
+         map?.removeLayer(layer_);
       };
    }, [map]);
+
+   useEffect(() => {
+      if (order != undefined) {
+         layer.current?.setZIndex(order);
+      }
+   }, [order]);
 
    // create and add vector source layer
 

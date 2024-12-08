@@ -1,0 +1,44 @@
+.map-container {
+   position: relative;
+   height: 100%;
+   flex-grow: 1;
+}
+
+.map,
+.map-overlay {
+   position: absolute;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+}
+
+.map-overlay {
+   z-index: 10;
+   pointer-events: none;
+   display: flex;
+   flex-direction: row;
+   justify-content: flex-end;
+}
+
+.map-overlay>div {
+   pointer-events: all;
+}
+
+.map-menu {
+   width: 25px;
+   margin: 5px;
+   display: flex;
+   flex-direction: column;
+   justify-content: flex-end;
+}
+
+.map-menu>button {
+   padding: 5px;
+   height: 25px;
+   background-color: #175A8A;
+}
+
+.map-menu>button:hover {
+   background-color: var(--hover-color);
+}

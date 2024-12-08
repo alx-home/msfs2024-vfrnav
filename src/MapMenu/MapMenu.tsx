@@ -1,25 +1,28 @@
-import { Dispatch, FC, KeyboardEvent, SetStateAction, useContext, useEffect, useState } from 'react';
-import '@/MapMenu/map-menu.css'
+import { Dispatch, FC, KeyboardEvent, SetStateAction, useContext, useEffect, useRef, useState } from 'react';
 import useMouseMove from '@/Events/MouseMove';
 import useMouseRelease from '@/Events/MouseRelease';
 import { MouseContext } from '@/Events/MouseContext';
 import { Layer, Layers, OnLayerChange } from './Menus/Layers';
-import { Nav } from './Menus/Nav';
+import { Nav, NavData, NavItem } from './Menus/Nav';
+
+import './style.css'
+import { Feature } from 'ol';
 
 export enum Menu { layers, nav };
 
-export const MapMenu: FC<{ open: boolean, setOpen: Dispatch<SetStateAction<boolean>>, menu: Menu, layers: Layer[], onLayerChange: OnLayerChange }> =
-   ({ open, setOpen, menu, layers, onLayerChange }) => {
+export const MapMenu: FC<{ open: boolean, setOpen: Dispatch<SetStateAction<boolean>>, menu: Menu, layers: Layer[], navData: NavData[], onLayerChange: OnLayerChange, addNav: () => void, removeNav: (name: string) => void, editNav: (name: string, newName: string) => void, addFeature: (feature: Feature) => void, removeFeature: (feature: Feature) => void }> =
+   ({ open, setOpen, menu, layers, onLayerChange, navData, addNav, removeNav, editNav, addFeature, removeFeature }) => {
+      const closeWidth = 40;
+      const minWidth = 120;
+      const maxWidth = 250;
+
       const [initialDelta, setInitialDelta] = useState<number | undefined>();
       const [width, setWidth] = useState(0);
-      const [defaultWidth, setDefaultWidth] = useState(100);
+      const [defaultWidth, setDefaultWidth] = useState(minWidth);
       const [cursorOut, setCursorOut] = useState(false);
       const mousePosition = useMouseMove();
       const mouseUp = useMouseRelease();
       const { cursorChangeHandler } = useContext(MouseContext);
-      const closeWidth = 40;
-      const minWidth = 100;
-      const maxWidth = 250;
 
       const onDragStart = (mouseX: number) => {
          setInitialDelta(width + mouseX);
@@ -96,7 +99,11 @@ export const MapMenu: FC<{ open: boolean, setOpen: Dispatch<SetStateAction<boole
          <div style={{ width: width }} className='map-menu-ext'>
             {menu == Menu.layers ?
                <Layers layers={layers} onLayerChange={onLayerChange} /> :
-               <Nav />}
+               <Nav addItem={addNav}>
+                  {navData.map((item) => <NavItem key={item.id} active={item.active} setActive={(active: boolean) => item.active = active} name={item.name} shortName={item.shortName} feature={item.feature}
+                     addFeature={addFeature} removeFeature={removeFeature}
+                     editItem={editNav} removeItem={removeNav} />)}
+               </Nav>}
          </div>
       </>
    };

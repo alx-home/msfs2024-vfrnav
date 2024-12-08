@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 
 import Image from "next/image";
 
+import './layers.css';
+
 export class Layer {
    constructor(public src: string, public alt: string, public order: number) { }
 };
@@ -29,7 +31,10 @@ export const Layers = ({ layers, onLayerChange }: { layers: Layer[], onLayerChan
          onOrdersChange={(orders: number[]) => {
             onLayerChange(orders.map((order, index) => ({ index: index, order: order })));
          }}>
-         {layers.map((layer, index) => <LayerComp order={layer.order} key={layer.alt} src={layer.src} alt={layer.alt} onActiveChange={active => onLayerChange([{ index: index, active: active }])} />)}
+         {layers.map((layer, index) =>
+            <LayerComp order={layer.order} key={layer.alt} src={layer.src} alt={layer.alt}
+               onActiveChange={active => onLayerChange([{ index: index, active: active }])} />
+         )}
       </Draggable>
    </>;
 };
