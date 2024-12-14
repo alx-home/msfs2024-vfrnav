@@ -118,7 +118,11 @@ const OverlayItem = ({ menu, setMenu, setOpen, image, alt, currentMenu }: {
    alt: string,
    currentMenu: Menu
 }) => {
-   return <button className='p-2 h-9 w-full bg-overlay hocus:bg-highlight' onClick={() => { setOpen(open => menu !== currentMenu ? true : !open); setMenu(currentMenu); }}
+   return <button className='p-2 h-9 w-full bg-overlay hocus:bg-highlight'
+      onClick={() => {
+         setOpen(open => menu !== currentMenu ? true : !open);
+         setMenu(currentMenu);
+      }}
       onMouseUp={e => e.currentTarget.blur()}>
       <Image src={image} alt={alt} />
    </button>;
@@ -139,7 +143,9 @@ const SpinAnimation = ({ mapContext }: {
    mapContext: MapContext
 }) => {
    return <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center" >
-      <span key={mapContext.flashKey} className={"animate-ping-1 m-auto inline-flex aspect-square w-2/4 rounded-full bg-sky-400 opacity-75 justify-center" + (mapContext.flash ? '' : 'hidden')}
+      <span key={mapContext.flashKey}
+         className={"animate-ping-1 m-auto inline-flex aspect-square w-2/4 rounded-full bg-sky-400 opacity-75 justify-center"
+            + (mapContext.flash ? '' : ' hidden')}
          onAnimationIteration={() => mapContext.triggerFlash(false)}
       >
          <h1 className="flex justify-center text-[2vw] m-auto">
