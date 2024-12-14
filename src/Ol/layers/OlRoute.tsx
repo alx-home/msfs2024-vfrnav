@@ -106,10 +106,9 @@ export const OlRouteLayer = ({
                      if (geometry.getType() === 'MultiLineString') {
                         const coords_ = (coords as Coordinate[][])[0];
 
+                        // Draw markers
+                        //------------------------------
                         coords_.forEach((coord, index) => {
-
-                           // Draw markers
-                           //------------------------------
                            if (index === 0) {
                               // First Coord
                               if (greenMarker.current) {
@@ -126,10 +125,11 @@ export const OlRouteLayer = ({
                                  context.drawImage(blueMarker.current, coord[0] - 25, coord[1] - 50, 50, 50);
                               }
                            }
+                        });
 
-                           // Draw Distance/cap
-                           //------------------------------
-
+                        // Draw Distance/cap
+                        //------------------------------
+                        coords_.forEach((coord, index) => {
                            if (index !== coords_.length - 1) {
                               const nextCoord = coords_[index + 1];
 
