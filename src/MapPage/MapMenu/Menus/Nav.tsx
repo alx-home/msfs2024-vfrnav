@@ -121,14 +121,6 @@ const Add = ({ name, image, onClick }: PropsWithChildren<{
 };
 
 export const Nav = ({ children, mapContext }: PropsWithChildren<{ mapContext: MapContext }>) => {
-   const keyUp = useKeyUp();
-
-   useEffect(() => {
-      if (keyUp === 'Escape') {
-         mapContext.cancel();
-      }
-   }, [keyUp]);
-
    return <>
       <div className="flex min-h-12 shrink-0 items-center justify-between ps-1 text-2xl font-semibold">
          Nav's

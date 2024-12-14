@@ -14,7 +14,7 @@ import Stroke from "ol/style/Stroke";
 import { toContext } from "ol/render";
 import Fill from "ol/style/Fill";
 import { Coordinate } from "ol/coordinate";
-import { MutableRefObject, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MapContext } from "@/MapPage/MapPage";
 
 
@@ -81,7 +81,7 @@ export const OlRouteLayer = ({
          source: source,
          style: (feature: FeatureLike) => {
             const geom = feature.getGeometry();
-            if (geom?.getType() == 'MultiLineString') {
+            if (geom?.getType() === 'MultiLineString') {
                return [new Style({
                   renderer: (coords, state) => {
                      const context = state.context;
@@ -96,15 +96,15 @@ export const OlRouteLayer = ({
                      geometry.setCoordinates(coords);
                      renderContext.drawGeometry(geometry);
 
-                     if (geometry.getType() == 'MultiLineString') {
+                     if (geometry.getType() === 'MultiLineString') {
                         const coords_ = (coords as Coordinate[][])[0];
 
                         for (const coord of coords_) {
-                           if (coord == coords_[0]) {
+                           if (coord === coords_[0]) {
                               if (greenMarker.current) {
                                  context.drawImage(greenMarker.current, coord[0] - 25, coord[1] - 50, 50, 50);
                               }
-                           } else if (coord == coords_[coords_.length - 1]) {
+                           } else if (coord === coords_[coords_.length - 1]) {
                               if (redMarker.current) {
                                  context.drawImage(redMarker.current, coord[0] - 25, coord[1] - 50, 50, 50);
                               }
@@ -184,7 +184,7 @@ export const OlRouteLayer = ({
    }, [map]);
 
    useEffect(() => {
-      if (order != undefined) {
+      if (order !== undefined) {
          layer.current?.setZIndex(order);
       }
    }, [order]);

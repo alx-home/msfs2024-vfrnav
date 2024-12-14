@@ -195,7 +195,7 @@ export const MapPage = ({ active }: {
    const mapContext = MapContext.use();
 
    return <div className='relative grow h-100' style={active ? {} : { display: 'none' }}>
-      <OlMap id='map' className='absolute w-full h-full top-0 left-0'>
+      <OlMap id='map' className='absolute w-full h-full top-0 left-0' mapContext={mapContext}>
          {layers.map(layer => ({ ...layer.olLayer, props: { ...layer.olLayer.props, order: layer.order, active: layer.active } }))}
          <OlRouteLayer
             mapContext={mapContext}
