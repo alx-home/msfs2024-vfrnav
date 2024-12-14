@@ -1,9 +1,12 @@
+'use client'
+
 import { Draggable } from "@/Utils/Draggable";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import Image from "next/image";
 
-import './layers.css';
+import styles from './layers.module.sass';
+
 
 export class Layer {
    constructor(public src: string, public alt: string, public order: number) { }
@@ -11,11 +14,20 @@ export class Layer {
 
 const LayerComp = ({ src, alt, onActiveChange }: Layer & { onActiveChange: (active: boolean) => void }) => {
    const [active, setActive] = useState<boolean>(true);
+   const [transition, setTransition] = useState(false);
+   const ref = useRef<HTMLButtonElement | null>(null);
 
    useEffect(() => onActiveChange(active), [active]);
+   useEffect(() => {
+      setTransition(false);
+      setTimeout(() => setTransition(true), 10);
+   }, []);
 
-   return <button onClick={e => setActive(active => !active)}>
-      <Image width={200} height={200} src={src} alt={alt} {...(active ? { className: 'active-layer' } : {})} />
+   return <button className={styles.button}
+      ref={ref}
+      onClick={e => setActive(active => !active)}
+      onMouseUp={e => ref.current?.blur()}>
+      <Image width={200} height={200} src={src} alt={alt} className={(active ? styles.active : '') + (transition ? ' ' + styles.with_transition : '')} />
    </button>;
 };
 
@@ -23,10 +35,10 @@ export type OnLayerChange = (layers: { index: number, order?: number, active?: b
 
 export const Layers = ({ layers, onLayerChange }: { layers: Layer[], onLayerChange: OnLayerChange }) => {
    return <>
-      <h1>
+      <div className="flex min-h-12 shrink-0 items-center justify-between ps-1 text-2xl font-semibold">
          Layers
-      </h1>
-      <Draggable
+      </div>
+      <Draggable className={styles.drag_container}
          vertical={true}
          onOrdersChange={(orders: number[]) => {
             onLayerChange(orders.map((order, index) => ({ index: index, order: order })));

@@ -1,5 +1,5 @@
-import { MapMenu, Menu } from "@/MapMenu/MapMenu";
-import { NavData } from '@/MapMenu/Menus/Nav';
+import { MapMenu, Menu } from "@/MapPage/MapMenu/MapMenu";
+import { NavData } from '@/MapPage/MapMenu/Menus/Nav';
 import { OlBingLayer } from "@/Ol/layers/OlBingLayer";
 import { OlOSMLayer } from "@/Ol/layers/OlOSMLayer";
 import { OlRouteLayer } from "@/Ol/layers/OlRoute";
@@ -7,15 +7,15 @@ import { OlWMTSLayer } from "@/Ol/layers/OlWMTSLayer";
 import { OlMap } from "@/Ol/OlMap";
 import { getTopLeft, getWidth } from 'ol/extent.js';
 import { get as getProjection } from 'ol/proj.js';
-import { useRef, useState } from "react";
+import { Dispatch, MutableRefObject, SetStateAction, useMemo, useRef, useState } from "react";
 
 import flightPlanImg from '@/../public/flight-plan.svg';
 import layersImg from '@/../public/layers.svg';
 import Image from "next/image";
 
-import './style.css';
 import { Feature } from "ol";
 import VectorLayer from "ol/layer/Vector";
+import { StaticImport } from "next/dist/shared/lib/get-img-props";
 
 const projection = getProjection('EPSG:3857')!;
 const projectionExtent = projection.getExtent();
@@ -29,7 +29,126 @@ for (let z = 0; z < 19; ++z) {
    matrixIds[z] = z;
 }
 
-export const MapPage = ({ active }: { active: boolean }) => {
+export class MapContext {
+   constructor(
+      public readonly addNavRef: MutableRefObject<(() => void) | undefined>,
+      public readonly cancelRef: MutableRefObject<(() => void) | undefined>,
+      public readonly addFeatureRef: MutableRefObject<((feature: Feature) => void) | undefined>,
+      public readonly removeFeatureRef: MutableRefObject<((feature: Feature) => void) | undefined>,
+      public readonly setNavData: Dispatch<SetStateAction<NavData[]>>,
+      public readonly setCounter: Dispatch<SetStateAction<number>>,
+      public readonly navData: NavData[],
+      public readonly counter: number,
+      public readonly flash: boolean,
+      public readonly setFlash: Dispatch<SetStateAction<boolean>>,
+      public readonly flashKey: number,
+      public readonly setFlashKey: Dispatch<SetStateAction<number>>
+   ) { }
+
+   public triggerFlash(value?: boolean) {
+      if (value ?? true) {
+         this.setFlashKey(key => key + 1);
+      }
+      this.setFlash(value ?? true);
+   }
+
+   public addNav() {
+      this.triggerFlash();
+      this.addNavRef?.current?.();
+   }
+
+   public cancel() {
+      this.cancelRef?.current?.();
+   }
+
+   public editNav(name: string, newName: string) {
+      this.setNavData(items => {
+         const newItems = [...items];
+         const item = newItems.find((item) => item.name === name);
+         if (item) {
+            item.name = newName;
+         }
+         return newItems;
+      })
+   }
+   public activeNav(name: string, active: boolean) {
+      this.setNavData(items => {
+         const newItems = [...items];
+         newItems.find((item) => item.name === name)!.active = active;
+         return newItems;
+      });
+   }
+
+   public removeNav(name: string) {
+      this.setNavData(items => {
+         const newItems = [...items];
+         newItems.splice(newItems.findIndex((item) => item.name === name), 1);
+         return newItems;
+      });
+   }
+
+   public addFeature(feature: Feature) {
+      this.addFeatureRef?.current?.(feature);
+   }
+
+   public removeFeature(feature: Feature) {
+      this.removeFeatureRef?.current?.(feature);
+   }
+
+   static readonly use = () => {
+      const addNav = useRef<() => void>();
+      const cancel = useRef<() => void>();
+      const addFeature = useRef<(feature: Feature) => void>();
+      const removeFeature = useRef<(feature: Feature) => void>();
+      const [navData, setNavData] = useState<NavData[]>([]);
+      const [counter, setCounter] = useState(0);
+      const [flash, setFlash] = useState(false);
+      const [flashKey, setFlashKey] = useState(0);
+
+      const context = useMemo<MapContext>(() => new MapContext(addNav, cancel, addFeature, removeFeature, setNavData, setCounter, navData, counter, flash, setFlash, flashKey, setFlashKey), [navData, counter, flash, flashKey]);
+
+      return context;
+   };
+};
+
+const OverlayItem = ({ menu, setMenu, setOpen, image, alt, currentMenu }: {
+   menu: Menu,
+   setMenu: Dispatch<SetStateAction<Menu>>,
+   setOpen: Dispatch<SetStateAction<boolean>>,
+   image: string | StaticImport,
+   alt: string,
+   currentMenu: Menu
+}) => {
+   return <button className='p-2 h-9 w-full bg-[var(--overlay-bg)] hover:bg-[var(--highlight-color)] focus:bg-[var(--highlight-color)]' onClick={() => { setOpen(open => menu !== currentMenu ? true : !open); setMenu(currentMenu); }}
+      onMouseUp={e => e.currentTarget.blur()}>
+      <Image src={image} alt={alt} />
+   </button>;
+};
+
+const Overlay = ({ menu, setMenu, setOpen }: {
+   menu: Menu,
+   setMenu: Dispatch<SetStateAction<Menu>>,
+   setOpen: Dispatch<SetStateAction<boolean>>
+}) => {
+   return <div className='flex flex-col justify-end m-2 w-9 pointer-events-auto'>
+      <OverlayItem menu={menu} setMenu={setMenu} setOpen={setOpen} currentMenu={Menu.layers} alt='layers' image={layersImg} />
+      <OverlayItem menu={menu} setMenu={setMenu} setOpen={setOpen} currentMenu={Menu.nav} alt='flight plan' image={flightPlanImg} />
+   </div>;
+};
+
+const SpinAnimation = ({ mapContext }: {
+   mapContext: MapContext
+}) => {
+   return <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center" >
+      <span key={mapContext.flashKey} className={"animate-ping-1 m-auto inline-flex aspect-square w-2/4 rounded-full bg-sky-400 opacity-75 " + (mapContext.flash ? '' : 'hidden')}
+         onAnimationIteration={() => mapContext.triggerFlash(false)}
+      ></span>
+   </div>;
+}
+
+export const MapPage = ({ active }: {
+   active: boolean
+}) => {
    const [open, setOpen] = useState(false);
    const [menu, setMenu] = useState<Menu>(Menu.layers);
    const [layers, setLayers] = useState([
@@ -64,72 +183,47 @@ export const MapPage = ({ active }: { active: boolean }) => {
       order: index,
       active: true
    })));
-   const [navData, setNavData] = useState<NavData[]>([]);
-   const [counter, setCounter] = useState(0);
-   const addNav = useRef<() => void>();
-   const addFeature = useRef<(feature: Feature) => void>();
-   const removeFeature = useRef<(feature: Feature) => void>();
+   const mapContext = MapContext.use();
 
-   return <div className='map-container' style={active ? {} : { display: 'none' }}>
-      <OlMap id='map' className='map'>
+   return <div className='relative grow h-100' style={active ? {} : { display: 'none' }}>
+      <OlMap id='map' className='absolute w-full h-full top-0 left-0'>
          {layers.map(layer => ({ ...layer.olLayer, props: { ...layer.olLayer.props, order: layer.order, active: layer.active } }))}
          <OlRouteLayer
-            addNav={addNav}
-            addFeature={addFeature}
-            removeFeature={removeFeature}
+            mapContext={mapContext}
             order={layers.length}
             onDrawEnd={(feature: Feature, layer: VectorLayer) => {
-               setNavData(items => ([...items, { id: counter, active: active, name: `New Nav ${counter}`, shortName: `${counter}`, feature: feature, layer: layer }]));
-               setCounter(counter => counter + 1);
+               mapContext.setNavData(items => {
+                  const { counter } = mapContext;
+                  return [...items, { id: counter, active: active, name: `New Nav ${counter}`, shortName: `${counter}`, feature: feature, layer: layer }];
+               });
+               mapContext.setCounter(counter => counter + 1);
             }} />
       </OlMap>
-      <div className='map-overlay'>
-         <div className='map-menu'>
-            <button onClick={() => { setOpen(open => menu != Menu.layers ? true : !open); setMenu(Menu.layers); }}>
-               <Image src={layersImg} alt='layers' />
-            </button>
-            <button onClick={() => { setOpen(open => menu != Menu.nav ? true : !open); setMenu(Menu.nav); }}>
-               <Image src={flightPlanImg} alt='flight plan' />
-            </button>
+      <div className="absolute z-10 pointer-events-none flex grow justify-end w-full h-full top-0 left-0">
+         <div className={"relative flex grow justify-end h-full overflow-hidden"} >
+            <SpinAnimation mapContext={mapContext} />
+            <Overlay menu={menu} setMenu={setMenu} setOpen={setOpen} />
          </div>
-         <MapMenu open={open} setOpen={setOpen} menu={menu} layers={layers} navData={navData}
-            addNav={() => {
-               addNav.current?.();
-            }}
-            addFeature={feature => addFeature.current?.(feature)}
-            removeFeature={feature => removeFeature.current?.(feature)}
-            removeNav={(name: string) => setNavData(items => {
-               const newItems = [...items];
-               newItems.splice(newItems.findIndex((item) => item.name == name), 1);
-               return newItems;
-            })}
-            editNav={((name: string, newName: string) => {
-               setNavData(items => {
-                  const newItems = [...items];
-                  const item = newItems.find((item) => item.name == name);
-                  if (item) {
-                     item.name = newName;
-                  }
-                  return newItems;
-               })
-            })}
+         <div className="flex flex-row pointer-events-auto">
+            <MapMenu open={open} setOpen={setOpen} menu={menu} layers={layers}
+               mapContext={mapContext}
+               onLayerChange={(values) =>
+                  setLayers(layers => {
+                     const newLayers = [...layers];
 
-            onLayerChange={(values) =>
-               setLayers(layers => {
-                  const newLayers = [...layers];
+                     values.forEach(elem => {
+                        if (elem.order !== undefined) {
+                           newLayers[elem.index].order = elem.order;
+                        }
+                        if (elem.active !== undefined) {
+                           newLayers[elem.index].active = elem.active;
+                        }
+                     });
 
-                  values.forEach(elem => {
-                     if (elem.order != undefined) {
-                        newLayers[elem.index].order = elem.order;
-                     }
-                     if (elem.active != undefined) {
-                        newLayers[elem.index].active = elem.active;
-                     }
-                  });
-
-                  return newLayers;
-               })
-            } />
+                     return newLayers;
+                  })
+               } />
+         </div>
       </div>
    </div>;
 }

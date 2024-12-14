@@ -1,4 +1,4 @@
-import { Children, isValidElement, MutableRefObject, PropsWithChildren, useEffect, useRef, useState } from "react";
+import { Children, isValidElement, MutableRefObject, PropsWithChildren, useEffect, useState } from "react";
 
 export const AnimatedOrder = ({ children, orders, itemsRef, vertical }: PropsWithChildren<{ orders: number[], itemsRef: MutableRefObject<(HTMLDivElement | null)[]>, vertical: boolean }>) => {
    const [currentOrders, setCurrentOrders] = useState<number[]>();
@@ -9,7 +9,7 @@ export const AnimatedOrder = ({ children, orders, itemsRef, vertical }: PropsWit
    useEffect(() => {
       setTimeout(() => {
          setTransforms(undefined);
-      }, 1);
+      }, 10);
    }, [transforms]);
 
    useEffect(() => {

@@ -1,0 +1,52 @@
+.button
+   transition: background-color 500ms
+
+   &:hover,&:focus
+      filter: brightness(110%) contrast(110%)
+
+.drag_container
+   container: layers / inline-size
+   &>*
+      &>*
+         padding: 5px
+         width: 100%
+         overflow: hidden
+
+         &>img
+            display: block
+            margin-left: auto
+            margin-right: auto
+
+            &:not(.active)
+               border-left-color: var(--item-bg-inactive)
+
+      &:first-child
+         align-items: center
+
+.with_transition
+   transition: width 0.1s, height 0.1s
+
+.active
+   border-left: var(--highlight-color) solid
+
+@container layers (200px <= width)
+   .drag_container>*>*>img
+      width: 180px
+      height: 120px
+      border-left-width: var(--border-size-l)
+
+@container layers (150px <= width < 200px)
+   .drag_container>*>*>img
+      width: 120px
+      height: 82px
+      border-left-width: var(--border-size-m)
+
+@container layers (width < 150px)
+   .drag_container>*>*>img
+      opacity: 1.0
+      width: 80px
+      border-left-width: var(--border-size-s)
+
+@container layers (width < 120px)
+   .drag_container>*>*>img
+      transition: none

@@ -1,7 +1,8 @@
 import { PropsWithChildren, Children, useState, useEffect, useRef, isValidElement } from 'react';
 
-import '@/Utils/style.css';
 import { AnimatedOrder } from './AnimatedOrder';
+
+import styles from './draggable.module.sass';
 
 class Box {
    constructor(public min: number, public max: number) {
@@ -12,7 +13,7 @@ class Box {
    }
 }
 
-export const Draggable = ({ children, vertical, onOrdersChange }: PropsWithChildren<{ vertical: boolean, onOrdersChange: (orders: number[]) => void }>) => {
+export const Draggable = ({ children, vertical, onOrdersChange, className }: PropsWithChildren<{ vertical: boolean, onOrdersChange: (orders: number[]) => void, className?: string }>) => {
    const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
    const [boundings, setBoundings] = useState<Box[]>();
    const dragRef = useRef<HTMLDivElement | null>();
@@ -58,6 +59,7 @@ export const Draggable = ({ children, vertical, onOrdersChange }: PropsWithChild
             if (vertical) {
                if (bounding.Collapse(mousePos - (vertical ? window.scrollY : window.scrollX))) {
                   dragRef.current = getRef(order);
+                  dragRef.current?.focus()
                   break;
                }
             }
@@ -66,6 +68,7 @@ export const Draggable = ({ children, vertical, onOrdersChange }: PropsWithChild
    };
 
    const onDragEnd = () => {
+      dragRef.current?.blur()
       dragRef.current = undefined;
    };
 
@@ -100,17 +103,17 @@ export const Draggable = ({ children, vertical, onOrdersChange }: PropsWithChild
       }
    };
 
-   return <div className='drag-container'>
+   return <div className={className ?? styles.drag_container}>
       <AnimatedOrder orders={orders} itemsRef={itemsRef} vertical={vertical}>
          {
             Children.map(children, (child, index) => {
                return <div role="menuitem"
                   draggable
+                  tabIndex={-1}
                   ref={el => { itemsRef.current[index] = el; }}
                   onDragStart={e => onDragStart(vertical ? e.pageY : e.pageX)}
                   onDragOver={e => onDrag(vertical ? e.pageY : e.pageX)}
                   onDragEnd={onDragEnd}
-                  className='drag-item'
                   {...((itemsRef.current[index] == dragRef.current) ? { style: { opacity: 0 } } : {})}
                >
                   {child}

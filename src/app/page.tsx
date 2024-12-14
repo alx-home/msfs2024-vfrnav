@@ -34,7 +34,7 @@ export default function Home() {
   return (
     <MouseContextProvider>
       <div className='Home'>
-        <Menu pages={pages} setPage={page => setPage(page)} />
+        <Menu pages={pages} setPage={page => setPage(page)} activePage={page} />
         {pages.map(elem => elem.elem)}
       </div>
     </MouseContextProvider>

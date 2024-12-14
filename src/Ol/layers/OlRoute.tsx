@@ -15,24 +15,22 @@ import { toContext } from "ol/render";
 import Fill from "ol/style/Fill";
 import { Coordinate } from "ol/coordinate";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
+import { MapContext } from "@/MapPage/MapPage";
 
 
 export const OlRouteLayer = ({
    map,
-   addNav,
-   addFeature,
-   removeFeature,
+   mapContext,
    onDrawEnd,
    order
 }: {
-   addNav: MutableRefObject<(() => void) | undefined>,
-   addFeature: MutableRefObject<((feature: Feature) => void) | undefined>,
-   removeFeature: MutableRefObject<((feature: Feature) => void) | undefined>,
+   mapContext: MapContext,
    onDrawEnd: (feature: Feature, layer: VectorLayer) => void;
 } & OlLayerProp) => {
    const redMarker = useRef<HTMLImageElement>();
    const blueMarker = useRef<HTMLImageElement>();
    const greenMarker = useRef<HTMLImageElement>();
+
    const [newFeatures, setNewFeatures] = useState<Feature[]>();
    const drawRef = useRef<Draw>();
    const layer = useRef<VectorLayer>();
@@ -126,14 +124,14 @@ export const OlRouteLayer = ({
       });
 
       layer.current = layer_;
-      if (order != undefined) {
+      if (order !== undefined) {
          layer.current?.setZIndex(order);
       }
 
       const modify = new Modify({ source: source });
       const snap = new Snap({ source: source });
 
-      addNav.current = () => {
+      mapContext.addNavRef.current = () => {
          if (drawRef.current) {
             map?.removeInteraction(drawRef.current);
          }
@@ -142,8 +140,9 @@ export const OlRouteLayer = ({
             type: 'MultiLineString',
             source: source
          });
+
          drawRef.current = draw;
-         map?.addInteraction(draw);
+         map?.addInteraction(drawRef.current);
 
          draw.on('drawend', e => {
             map?.removeInteraction(draw);
@@ -153,12 +152,18 @@ export const OlRouteLayer = ({
          });
 
       };
-      addFeature.current = (feature: Feature) => {
+      mapContext.cancelRef.current = () => {
+         if (drawRef.current) {
+            map?.removeInteraction(drawRef.current);
+            drawRef.current = undefined;
+         }
+      };
+      mapContext.addFeatureRef.current = (feature: Feature) => {
          if (!source.hasFeature(feature)) {
             source.addFeature(feature);
          }
       };
-      removeFeature.current = (feature: Feature) => {
+      mapContext.removeFeatureRef.current = (feature: Feature) => {
          source.removeFeature(feature);
       };
 
