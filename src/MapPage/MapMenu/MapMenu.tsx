@@ -116,7 +116,7 @@ export const MapMenu: FC<{ open: boolean, setOpen: Dispatch<SetStateAction<boole
             onMouseDown={e => onDragStart(e.pageX)}
             onMouseUp={onDragEnd}
             onKeyDown={handleKey}
-            className='select-none transition-std transition-colors w-2 bg-slate-900 hover:bg-[var(--item-bg)] focus:bg-[var(--item-bg)]' />
+            className='select-none transition-std transition-colors w-2 bg-slate-900 hocus:bg-msfs' />
 
          <div style={{ width: width, ...(width > 0 ? {} : { display: 'none' }) }} className={'overflow-hidden shrink-0 border-l border-gray-700 pointer-events-auto flex h-full w-full flex-col gap-y-2.5 overflow-y-scroll bg-gray-800 text-center text-white' + (width > 0 ? ' p-3' : '')}>
             {menu === Menu.layers ?

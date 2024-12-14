@@ -118,7 +118,7 @@ const OverlayItem = ({ menu, setMenu, setOpen, image, alt, currentMenu }: {
    alt: string,
    currentMenu: Menu
 }) => {
-   return <button className='p-2 h-9 w-full bg-[var(--overlay-bg)] hover:bg-[var(--highlight-color)] focus:bg-[var(--highlight-color)]' onClick={() => { setOpen(open => menu !== currentMenu ? true : !open); setMenu(currentMenu); }}
+   return <button className='p-2 h-9 w-full bg-overlay hocus:bg-highlight' onClick={() => { setOpen(open => menu !== currentMenu ? true : !open); setMenu(currentMenu); }}
       onMouseUp={e => e.currentTarget.blur()}>
       <Image src={image} alt={alt} />
    </button>;
