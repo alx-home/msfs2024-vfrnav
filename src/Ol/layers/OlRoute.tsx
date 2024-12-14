@@ -101,12 +101,12 @@ export const OlRouteLayer = ({
 
                         for (const coord of coords_) {
                            if (coord === coords_[0]) {
-                              if (greenMarker.current) {
-                                 context.drawImage(greenMarker.current, coord[0] - 25, coord[1] - 50, 50, 50);
-                              }
-                           } else if (coord === coords_[coords_.length - 1]) {
                               if (redMarker.current) {
                                  context.drawImage(redMarker.current, coord[0] - 25, coord[1] - 50, 50, 50);
+                              }
+                           } else if (coord === coords_[coords_.length - 1]) {
+                              if (greenMarker.current) {
+                                 context.drawImage(greenMarker.current, coord[0] - 25, coord[1] - 50, 50, 50);
                               }
                            } else {
                               if (blueMarker.current) {
