@@ -142,7 +142,7 @@ const SpinAnimation = ({ mapContext }: {
       <span key={mapContext.flashKey} className={"animate-ping-1 m-auto inline-flex aspect-square w-2/4 rounded-full bg-sky-400 opacity-75 justify-center" + (mapContext.flash ? '' : 'hidden')}
          onAnimationIteration={() => mapContext.triggerFlash(false)}
       >
-         <h1 className="flex justify-center text-9xl m-auto">
+         <h1 className="flex justify-center text-[2vw] m-auto">
             Start Drawing !
          </h1>
       </span>
