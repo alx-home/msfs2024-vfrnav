@@ -53,7 +53,6 @@ export class MapContext {
    }
 
    public addNav() {
-      this.triggerFlash();
       this.addNavRef?.current?.();
    }
 
@@ -140,9 +139,13 @@ const SpinAnimation = ({ mapContext }: {
    mapContext: MapContext
 }) => {
    return <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center" >
-      <span key={mapContext.flashKey} className={"animate-ping-1 m-auto inline-flex aspect-square w-2/4 rounded-full bg-sky-400 opacity-75 " + (mapContext.flash ? '' : 'hidden')}
+      <span key={mapContext.flashKey} className={"animate-ping-1 m-auto inline-flex aspect-square w-2/4 rounded-full bg-sky-400 opacity-75 justify-center" + (mapContext.flash ? '' : 'hidden')}
          onAnimationIteration={() => mapContext.triggerFlash(false)}
-      ></span>
+      >
+         <h1 className="flex justify-center text-9xl m-auto">
+            Start Drawing !
+         </h1>
+      </span>
    </div>;
 }
 

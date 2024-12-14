@@ -144,6 +144,8 @@ export const OlRouteLayer = ({
          drawRef.current = draw;
          map?.addInteraction(drawRef.current);
 
+         mapContext.triggerFlash();
+
          draw.on('drawend', e => {
             map?.removeInteraction(draw);
             drawRef.current = undefined;
