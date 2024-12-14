@@ -112,13 +112,13 @@ export const OlRouteLayer = ({
                            //------------------------------
                            if (index === 0) {
                               // First Coord
-                              if (redMarker.current) {
-                                 context.drawImage(redMarker.current, coord[0] - 25, coord[1] - 50, 50, 50);
+                              if (greenMarker.current) {
+                                 context.drawImage(greenMarker.current, coord[0] - 25, coord[1] - 50, 50, 50);
                               }
                            } else if (index === coords_.length - 1) {
                               // Last Coord
-                              if (greenMarker.current) {
-                                 context.drawImage(greenMarker.current, coord[0] - 25, coord[1] - 50, 50, 50);
+                              if (redMarker.current) {
+                                 context.drawImage(redMarker.current, coord[0] - 25, coord[1] - 50, 50, 50);
                               }
                            } else {
                               // Coord in between
