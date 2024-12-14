@@ -8,6 +8,7 @@ import VectorLayer from "ol/layer/Vector";
 import Draw from "ol/interaction/Draw";
 import Modify from "ol/interaction/Modify";
 import Snap from "ol/interaction/Snap";
+import { doubleClick } from 'ol/events/condition';
 import { FeatureLike } from "ol/Feature";
 import Style from "ol/style/Style";
 import Stroke from "ol/style/Stroke";
@@ -178,7 +179,10 @@ export const OlRouteLayer = ({
          layer.current?.setZIndex(order);
       }
 
-      const modify = new Modify({ source: source });
+      const modify = new Modify({
+         source: source,
+         deleteCondition: doubleClick
+      });
       const snap = new Snap({ source: source });
 
       mapContext.addNavRef.current = () => {
