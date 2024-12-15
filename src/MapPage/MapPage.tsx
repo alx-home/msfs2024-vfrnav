@@ -7,7 +7,7 @@ import { OlWMTSLayer } from "@/Ol/layers/OlWMTSLayer";
 import { OlMap } from "@/Ol/OlMap";
 import { getTopLeft, getWidth } from 'ol/extent.js';
 import { get as getProjection } from 'ol/proj.js';
-import { Dispatch, MutableRefObject, SetStateAction, useEffect, useMemo, useRef, useState } from "react";
+import { Dispatch, MutableRefObject, SetStateAction, useCallback, useMemo, useRef, useState } from "react";
 
 import flightPlanImg from '@/../public/flight-plan.svg';
 import layersImg from '@/../public/layers.svg';
@@ -210,7 +210,7 @@ export const MapPage = ({ active }: {
       active: true
    })));
    const mapContext = MapContext.use();
-   const onLayerChange = useMemo<OnLayerChange>(() => (values) =>
+   const onLayerChange = useCallback<OnLayerChange>((values) =>
       setLayers(layers => {
          const newLayers = [...layers];
 
@@ -224,7 +224,7 @@ export const MapPage = ({ active }: {
          });
 
          return newLayers;
-      }), []);
+      }), [setLayers]);
 
    return <div className='relative grow h-100' style={active ? {} : { display: 'none' }}>
       <OlMap id='map' className='absolute w-full h-full top-0 left-0' mapContext={mapContext}>

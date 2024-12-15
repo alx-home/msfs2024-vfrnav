@@ -1,9 +1,6 @@
-import { Extent } from "ol/extent";
-import { Projection } from "ol/proj";
 import { OlLayerProp } from "./OlLayer";
 import TileLayer from "ol/layer/Tile";
-import { BingMaps, OSM, WMTS } from "ol/source";
-import WMTSTileGrid from "ol/tilegrid/WMTS";
+import { BingMaps } from "ol/source";
 import { useEffect, useRef } from "react";
 
 export const OlBingLayer = ({
@@ -30,7 +27,7 @@ export const OlBingLayer = ({
       map?.addLayer(tileLayer);
 
       return () => { map?.removeLayer(tileLayer); };
-   }, [map]);
+   }, [map, opacity]);
 
    useEffect(() => {
       if (order != undefined) {

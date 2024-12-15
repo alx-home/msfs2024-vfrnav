@@ -1,9 +1,6 @@
-import { Extent } from "ol/extent";
-import { Projection } from "ol/proj";
 import { OlLayerProp } from "./OlLayer";
 import TileLayer from "ol/layer/Tile";
-import { OSM, WMTS } from "ol/source";
-import WMTSTileGrid from "ol/tilegrid/WMTS";
+import { OSM } from "ol/source";
 import { useEffect, useRef } from "react";
 
 export const OlOSMLayer = ({
@@ -27,7 +24,7 @@ export const OlOSMLayer = ({
       map?.addLayer(tileLayer);
 
       return () => { map?.removeLayer(tileLayer); };
-   }, [map]);
+   }, [map, opacity]);
 
    useEffect(() => {
       if (order != undefined) {

@@ -1,4 +1,4 @@
-import { Children, isValidElement, MutableRefObject, PropsWithChildren, useEffect, useMemo, useState } from "react";
+import { Children, isValidElement, MutableRefObject, PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
 
 export const AnimatedOrder = ({ children, orders, itemsRef, vertical }: PropsWithChildren<{
    orders: number[],
@@ -9,7 +9,8 @@ export const AnimatedOrder = ({ children, orders, itemsRef, vertical }: PropsWit
    const [transforms, setTransforms] = useState<string[]>();
    const childs = useMemo(() => Children.toArray(children).filter(child => isValidElement(child)), [children]);
 
-   const getIndex = (order: number, orders_: number[] = orders) => orders_.findIndex(value => value === order);
+   const getIndex = useCallback((order: number, orders_: number[] = orders) => orders_.findIndex(value => value === order), [orders]);
+
    useEffect(() => {
       setTimeout(() => {
          setTransforms(undefined);
@@ -64,7 +65,7 @@ export const AnimatedOrder = ({ children, orders, itemsRef, vertical }: PropsWit
             return orders;
          })
       }
-   }, [orders]);
+   }, [orders, currentOrders, getIndex, itemsRef, vertical]);
 
    return <>{childs.map((child, index) => {
       const order = (currentOrders ?? [...orders.keys()])[index] + 1;

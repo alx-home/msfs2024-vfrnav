@@ -60,7 +60,7 @@ export const OlWMTSLayer = ({
       map?.addLayer(tileLayer);
 
       return () => { map?.removeLayer(tileLayer); };
-   }, [map]);
+   }, [map, format, layer, matrixSet, opacity, projection, style, tileGrid, url, version, wrapX]);
 
    useEffect(() => {
       if (order != undefined) {

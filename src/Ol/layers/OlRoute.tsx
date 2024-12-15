@@ -36,13 +36,15 @@ export const OlRouteLayer = ({
    const drawRef = useRef<Draw>();
    const layer = useRef<VectorLayer>();
    const sourceRef = useRef<VectorSource<Feature<Geometry>>>();
+   const modifyRef = useRef<Modify>();
+   const snapRef = useRef<Snap>();
 
    useEffect(() => {
       if (newFeatures) {
          newFeatures.forEach(feature => onDrawEnd(feature, layer.current!));
          setNewFeatures(undefined);
       }
-   }, [newFeatures])
+   }, [newFeatures, onDrawEnd])
 
    useEffect(() => {
       {
@@ -72,6 +74,8 @@ export const OlRouteLayer = ({
       const source = new VectorSource<Feature<Geometry>>({
          features: features
       });
+
+      sourceRef.current = source;
 
       const layer_ = new VectorLayer({
          source: source,
@@ -175,10 +179,11 @@ export const OlRouteLayer = ({
          }
       });
 
-      layer.current = layer_;
-      if (order !== undefined) {
-         layer.current?.setZIndex(order);
+      if (layer.current) {
+         map?.removeLayer(layer.current);
       }
+      layer.current = layer_;
+      map?.addLayer(layer_);
 
       const modify = new Modify({
          source: source,
@@ -186,6 +191,36 @@ export const OlRouteLayer = ({
       });
       const snap = new Snap({ source: source });
 
+      if (modifyRef.current) {
+         map?.removeInteraction(modifyRef.current);
+      }
+      modifyRef.current = modify;
+      if (snapRef.current) {
+         map?.removeInteraction(snapRef.current);
+      }
+      snapRef.current = snap;
+
+      map?.addInteraction(modify);
+      map?.addInteraction(snap);
+
+      return () => {
+         map?.removeInteraction(modify);
+         map?.removeInteraction(snap);
+         if (drawRef.current) {
+            map?.removeInteraction(drawRef.current);
+            drawRef.current = undefined;
+         }
+         map?.removeLayer(layer_);
+      };
+   }, [map, mapContext.aircraftSpeed]);
+
+   useEffect(() => {
+      if (order !== undefined) {
+         layer.current?.setZIndex(order);
+      }
+   }, [order]);
+
+   useEffect(() => {
       mapContext.addNavRef.current = () => {
          if (drawRef.current) {
             map?.removeInteraction(drawRef.current);
@@ -193,9 +228,12 @@ export const OlRouteLayer = ({
 
          const draw = new Draw({
             type: 'MultiLineString',
-            source: source
+            source: sourceRef.current
          });
 
+         if (drawRef.current) {
+            map?.removeInteraction(drawRef.current);
+         }
          drawRef.current = draw;
          map?.addInteraction(drawRef.current);
 
@@ -209,36 +247,31 @@ export const OlRouteLayer = ({
          });
 
       };
+   }, [map, mapContext]);
+
+   useEffect(() => {
       mapContext.cancelRef.current = () => {
          if (drawRef.current) {
             map?.removeInteraction(drawRef.current);
             drawRef.current = undefined;
          }
       };
+   }, [map, mapContext.cancelRef]);
+
+   useEffect(() => {
       mapContext.addFeatureRef.current = (feature: Feature) => {
-         if (!source.hasFeature(feature)) {
-            source.addFeature(feature);
+         if (!sourceRef.current?.hasFeature(feature)) {
+            sourceRef.current?.addFeature(feature);
          }
       };
+   }, [map, mapContext.addFeatureRef]);
+
+   useEffect(() => {
       mapContext.removeFeatureRef.current = (feature: Feature) => {
-         source.removeFeature(feature);
+         sourceRef.current?.removeFeature(feature);
       };
+   }, [map, mapContext.removeFeatureRef]);
 
-      sourceRef.current = source;
-
-      map?.addInteraction(modify);
-      map?.addInteraction(snap);
-      map?.addLayer(layer_);
-
-      return () => {
-         map?.removeInteraction(modify);
-         map?.removeInteraction(snap);
-         if (drawRef.current) {
-            map?.removeInteraction(drawRef.current);
-         }
-         map?.removeLayer(layer_);
-      };
-   }, [map]);
 
    useEffect(() => {
       if (order !== undefined) {

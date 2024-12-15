@@ -19,13 +19,13 @@ export const OlMap = ({ children, id, className, mapContext }: PropsWithChildren
             mapContext.cancel();
          }
       }
-   }, [mouseRelease]);
+   }, [mouseRelease, mapContext, mouseInside]);
 
    useEffect(() => {
       if (keyUp === 'Escape') {
          mapContext.cancel();
       }
-   }, [keyUp])
+   }, [keyUp, mapContext])
 
    // set intial state
    const [map, setMap] = useState<Map>();

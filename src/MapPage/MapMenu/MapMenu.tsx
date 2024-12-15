@@ -1,5 +1,4 @@
-import { Dispatch, FC, KeyboardEvent, SetStateAction, useContext, useEffect, useRef, useState } from 'react';
-import useMouseMove from '@/Events/MouseMove';
+import { Dispatch, KeyboardEvent, SetStateAction, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import useMouseRelease from '@/Events/MouseRelease';
 import { MouseContext } from '@/Events/MouseContext';
 import { Layer, Layers, OnLayerChange } from './Menus/Layers';
@@ -39,7 +38,7 @@ export const MapMenu = ({ open, setOpen, menu, layers, onLayerChange, mapContext
       setOpen(width > 0);
    };
 
-   const onDragEnd = () => {
+   const onDragEnd = useCallback(() => {
       handleRef.current?.blur();
 
       if (width > 0) {
@@ -50,9 +49,9 @@ export const MapMenu = ({ open, setOpen, menu, layers, onLayerChange, mapContext
       if (cursorOut) {
          setResizing(false);
       }
-   };
+   }, [width, setInitialDelta, setResizing, cursorOut]);
 
-   const updateWidth = (width: number) => {
+   const updateWidth = useCallback((width: number) => {
       if (width < closeWidth) {
          width = 0;
       } else if (width < minWidth) {
@@ -63,14 +62,13 @@ export const MapMenu = ({ open, setOpen, menu, layers, onLayerChange, mapContext
 
       setOpen(width > 0);
       setWidth(width);
-   };
+   }, [closeWidth, minWidth, maxWidth, setOpen, setWidth]);
 
-   const onDrag = (mouseX: number) => {
-      if (initialDelta) {
-         let width = initialDelta - mouseX;
-         updateWidth(width);
+   const onDrag = useCallback((mouseX: number) => {
+      if (initialDelta !== undefined) {
+         updateWidth(initialDelta - mouseX);
       }
-   };
+   }, [initialDelta, updateWidth]);
 
    const handleKey = (e: KeyboardEvent<HTMLDivElement>) => {
       if (e.key === "ArrowLeft") {
@@ -84,11 +82,13 @@ export const MapMenu = ({ open, setOpen, menu, layers, onLayerChange, mapContext
       if (mousePosition) {
          onDrag(mousePosition.x);
       }
-   }, [mousePosition]);
+   }, [mousePosition, onDrag]);
 
    useEffect(() => {
-      onDragEnd();
-   }, [mouseUp]);
+      if (mouseUp !== undefined) {
+         onDragEnd();
+      }
+   }, [mouseUp, onDragEnd]);
 
    useEffect(() => {
       if (open) {
@@ -98,7 +98,7 @@ export const MapMenu = ({ open, setOpen, menu, layers, onLayerChange, mapContext
       } else if (width) {
          setWidth(0);
       }
-   }, [open]);
+   }, [open, defaultWidth, width]);
 
    useEffect(() => {
       if (resizing) {
@@ -106,7 +106,7 @@ export const MapMenu = ({ open, setOpen, menu, layers, onLayerChange, mapContext
       } else {
          cursorChangeHandler("");
       }
-   }, [resizing]);
+   }, [resizing, cursorChangeHandler]);
 
    return <>
       <div ref={handleRef} role="separator" aria-orientation="vertical" tabIndex={0}

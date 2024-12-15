@@ -10,11 +10,11 @@ export const Button = ({ children, onClick, className, active }: PropsWithChildr
    const mouseLeave = useMouseRelease();
 
    useEffect(() => {
-      if (active) {
+      if (active && mouseLeave !== undefined) {
          elemRef.current?.focus();
          elemRef.current?.blur();
       }
-   }, [mouseLeave]);
+   }, [mouseLeave, active]);
 
 
    return <div className={"grow bg-gray-700 p-1 shadow-md flex text-left hover:bg-gray-800 hover:drop-shadow-xl rounded-sm border-2 border-gray-900 has-[:focus]:border-msfs has-[:hover]:border-msfs"}>

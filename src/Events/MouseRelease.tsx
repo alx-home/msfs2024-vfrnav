@@ -12,5 +12,11 @@ export default function useMouseRelease() {
       return () => document.removeEventListener('mouseup', handleMouseUp);
    }, []);
 
+   useEffect(() => {
+      if (mousePosition !== undefined) {
+         setMousePosition(undefined);
+      }
+   }, [mousePosition]);
+
    return mousePosition;
 }

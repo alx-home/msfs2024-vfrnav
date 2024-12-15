@@ -45,19 +45,22 @@ const Edit = ({ onClick, image, alt, background, hidden }: {
    </button>;
 };
 
-const Input = ({ mapContext, editMode, setEditMode, name, active }: {
+const Input = ({ mapContext, editMode, setEditMode, name }: {
    editMode: boolean,
    setEditMode: Dispatch<SetStateAction<boolean>>,
-   active: boolean,
    mapContext: MapContext,
    name: string
 }) => {
    const textArea = useRef<HTMLInputElement | null>(null);
-   useEffect(() => textArea.current?.focus(), [editMode]);
+   useEffect(() => {
+      if (editMode) {
+         textArea.current?.focus()
+      }
+   }, [editMode]);
    const [value, setValue] = useState(name);
 
    return <input className={'bg-transparent h-8 pt-1 pl-2 pointer-events-auto'} ref={textArea} value={value} style={editMode ? {} : { display: 'none' }}
-      onBlur={e => {
+      onBlur={() => {
          mapContext.editNav(name, value)
          setEditMode(false);
       }}
@@ -91,12 +94,12 @@ export const NavItem = ({ name, shortName, feature, active, mapContext, setDragg
       } else {
          mapContext.removeFeature(feature);
       }
-   }, [active]);
+   }, [active, feature, mapContext]);
 
 
    useEffect(() => {
       return () => setDraggable?.(true);
-   }, [])
+   }, [setDraggable])
 
    useEffect(() => {
       if (editMode) {
@@ -104,11 +107,11 @@ export const NavItem = ({ name, shortName, feature, active, mapContext, setDragg
       } else {
          setDraggable?.(true);
       }
-   }, [editMode])
+   }, [editMode, setDraggable])
 
    return <div className={'flex flex-row grow gap-2' + (active ? ' border-l-2 border-msfs' : '')}
-      onMouseEnter={e => setHover(true)}
-      onMouseLeave={e => setHover(false)}>
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}>
       <Button className={'flex flex-row grow @container/label'}
          active={!editMode}
          onClick={() => mapContext.setNavData((navData) => {
@@ -120,7 +123,7 @@ export const NavItem = ({ name, shortName, feature, active, mapContext, setDragg
             return newData;
          })}>
          <Label name={name} shortName={shortName} editMode={editMode} />
-         <Input mapContext={mapContext} editMode={editMode} setEditMode={setEditMode} name={name} active={active} />
+         <Input mapContext={mapContext} editMode={editMode} setEditMode={setEditMode} name={name} />
       </Button>
       <div className={'transition duration-std flex flex-row gap-2 overflow-hidden max-w-24 h-11 mt-auto mb-auto ' + ((hover || focused) ? 'w-full' : 'w-0')}
          style={{ display: (editMode ? 'none' : ''), transitionProperty: 'width' }}
@@ -175,11 +178,11 @@ export const Nav = ({ children, mapContext }: PropsWithChildren<{
          {child}
       </Item>
    })
-      , [children]);
+      , [children, mapContext.navData]);
 
    return <>
       <div className="flex min-h-12 shrink-0 items-center justify-between ps-1 text-2xl font-semibold">
-         Nav's
+         Nav&apos;s
       </div>
       <menu className={"flex flex-col gap-3"}>
          <Draggable key={key} className='@container flex flex-col w-full overflow-hidden gap-2'
@@ -192,8 +195,8 @@ export const Nav = ({ children, mapContext }: PropsWithChildren<{
             {childs}
          </Draggable>
          <div className='flex gap-x-4'>
-            <Add name='Add' image={newFileImg} onClick={e => { mapContext.addNav() }} />
-            <Add name='Import' image={importImg} onClick={e => { }} />
+            <Add name='Add' image={newFileImg} onClick={() => { mapContext.addNav() }} />
+            <Add name='Import' image={importImg} onClick={() => { }} />
          </div>
       </menu>
    </>

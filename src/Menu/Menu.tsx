@@ -8,9 +8,9 @@ export const Menu = ({ setPage, pages, activePage }: { pages: Page[], setPage: (
       {pages.map((page, index) =>
          <button key={page.name}
             className={'border-x-2 border-r-transparent transition-colors group flex h-12 min-w-16  items-center gap-x-3.5 p-1 pl-[12px] text-left text-xl bg-item border-l-2 border-l-msfs hocus:bg-white hocus:text-gray-600 [&>*]:hocus:invert-0 hocus:border-white ' + (page.name === activePage ? ' bg-active-item border-r-white' : '')}
-            onClick={e => setPage(page.name)}
+            onClick={() => setPage(page.name)}
             ref={e => { refs.current[index] = e }}
-            onMouseUp={e => refs.current[index]?.blur()}>
+            onMouseUp={() => refs.current[index]?.blur()}>
             {{
                ...page.icon, props: {
                   ...page.icon.props,
