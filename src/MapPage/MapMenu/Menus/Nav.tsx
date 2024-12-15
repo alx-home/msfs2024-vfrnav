@@ -79,7 +79,7 @@ export const NavItem = ({ name, shortName, feature, active, mapContext, setDragg
    shortName: string,
    feature: Feature,
    mapContext: MapContext,
-   setDraggable?: Dispatch<SetStateAction<number>>
+   setDraggable?: Dispatch<SetStateAction<boolean>>
 }) => {
    const [editMode, setEditMode] = useState(false);
    const [hover, setHover] = useState(false);
@@ -95,19 +95,14 @@ export const NavItem = ({ name, shortName, feature, active, mapContext, setDragg
 
 
    useEffect(() => {
-      setDraggable?.(draggable => draggable + 1);
-      return () => {
-         if (editMode) {
-            setDraggable?.(draggable => draggable - 1);
-         }
-      };
-   }, []);
+      return () => setDraggable?.(true);
+   }, [])
 
    useEffect(() => {
       if (editMode) {
-         setDraggable?.(draggable => draggable + 1);
+         setDraggable?.(false);
       } else {
-         setDraggable?.(draggable => draggable - 1);
+         setDraggable?.(true);
       }
    }, [editMode])
 
@@ -152,7 +147,7 @@ const Add = ({ name, image, onClick }: PropsWithChildren<{
 const Item = ({ children, className, setDraggable }: PropsWithChildren<{
    order: number,
    className: string,
-   setDraggable: Dispatch<SetStateAction<number>>
+   setDraggable: Dispatch<SetStateAction<boolean>>
 }>) => {
    const child = useMemo(() => {
       const child = Children.only(children);
@@ -174,7 +169,7 @@ export const Nav = ({ children, mapContext }: PropsWithChildren<{
    mapContext: MapContext
 }>) => {
    const key = mapContext.navData.reduce((prev, elem) => { return prev + ";" + elem.name; }, "");
-   const [draggable, setDraggable] = useState(0);
+   const [draggable, setDraggable] = useState(true);
    const childs = useMemo(() => Children.toArray(children).filter(child => isValidElement(child)).map((child, index) => {
       return <Item key={mapContext.navData[index].id} order={mapContext.navData[index].order} className='flex gap-x-4' setDraggable={setDraggable}>
          {child}
@@ -189,7 +184,7 @@ export const Nav = ({ children, mapContext }: PropsWithChildren<{
       <menu className={"flex flex-col gap-3"}>
          <Draggable key={key} className='@container flex flex-col w-full overflow-hidden gap-2'
             vertical={true}
-            active={draggable === 0}
+            active={draggable}
             onOrdersChange={(orders: number[]) => {
                mapContext.reorderNav(orders);
             }}
