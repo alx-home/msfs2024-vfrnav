@@ -21,7 +21,7 @@ const LayerComp = ({ src, alt, onActiveChange, active }:
       if (currentActive !== active) {
          onActiveChange(currentActive);
       }
-   }, [currentActive, onActiveChange]);
+   }, [currentActive, onActiveChange, active]);
    useEffect(() => {
       setTransition(false);
       setTimeout(() => setTransition(true), 10);
