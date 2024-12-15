@@ -35,6 +35,7 @@ export const OlRouteLayer = ({
    const [newFeatures, setNewFeatures] = useState<Feature[]>();
    const drawRef = useRef<Draw>();
    const layer = useRef<VectorLayer>();
+   const sourceRef = useRef<VectorSource<Feature<Geometry>>>();
 
    useEffect(() => {
       if (newFeatures) {
@@ -222,6 +223,8 @@ export const OlRouteLayer = ({
       mapContext.removeFeatureRef.current = (feature: Feature) => {
          source.removeFeature(feature);
       };
+
+      sourceRef.current = source;
 
       map?.addInteraction(modify);
       map?.addInteraction(snap);

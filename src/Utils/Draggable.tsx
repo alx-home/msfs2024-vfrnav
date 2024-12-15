@@ -1,8 +1,6 @@
-import { PropsWithChildren, Children, useState, useEffect, useRef, isValidElement } from 'react';
+import { PropsWithChildren, Children, useState, useEffect, useRef, isValidElement, useMemo, ReactElement, JSXElementConstructor } from 'react';
 
 import { AnimatedOrder } from './AnimatedOrder';
-
-import styles from './draggable.module.sass';
 
 class Box {
    constructor(public min: number, public max: number) {
@@ -13,21 +11,22 @@ class Box {
    }
 }
 
-export const Draggable = ({ children, vertical, onOrdersChange, className }: PropsWithChildren<{ vertical: boolean, onOrdersChange: (orders: number[]) => void, className?: string }>) => {
+export const Draggable = ({ children, vertical, onOrdersChange, className, active }: PropsWithChildren<{
+   vertical: boolean,
+   className?: string,
+   onOrdersChange?: (orders: number[]) => void,
+   active?: boolean
+}>) => {
    const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
    const [boundings, setBoundings] = useState<Box[]>();
    const dragRef = useRef<HTMLDivElement | null>();
-   const [orders, setOrders] = useState<number[]>(Children.map(children, (child, index) => isValidElement(child) ? child.props.order : index) ?? []);
+
+   const childs = useMemo(() => Children.toArray(children).filter(child => isValidElement(child)), [children]);
+   const orders = useMemo<number[]>(() => childs.map(child => child.props.order) ?? [], [childs]);
 
    const getOrder = (index: number, orders_: number[] | undefined = orders) => orders_?.[index] ?? index;
-   const getIndex = (order: number, orders_: number[] | undefined = orders) => orders_?.findIndex((value) => value == order) ?? order;
+   const getIndex = (order: number, orders_: number[] | undefined = orders) => orders_?.findIndex((value) => value === order) ?? order;
    const getRef = (order: number) => itemsRef.current[getIndex(order)];
-
-   useEffect(() => {
-      if (orders) {
-         onOrdersChange(orders);
-      }
-   }, [orders]);
 
    const updateBoundings = () => {
       if (!itemsRef.current) {
@@ -80,41 +79,41 @@ export const Draggable = ({ children, vertical, onOrdersChange, className }: Pro
             return;
          }
 
-         if (getRef(newOrder) != dragRef.current) {
-            setOrders((oldOrders) => {
-               const index = itemsRef.current.findIndex((ref) => ref == dragRef.current);
-               const newOrders = oldOrders ? [...oldOrders] : [...itemsRef.current.keys()];
-               const oldOrder = getOrder(index, oldOrders);
+         if (getRef(newOrder) !== dragRef.current) {
+            const index = itemsRef.current.findIndex((ref) => ref === dragRef.current);
+            const newOrders = orders ? [...orders] : [...itemsRef.current.keys()];
+            const oldOrder = getOrder(index, orders);
 
-               if (newOrder > oldOrder) {
-                  for (let order = oldOrder + 1; order <= newOrder; ++order) {
-                     --newOrders[getIndex(order, oldOrders)];
-                  }
-               } else {
-                  for (let order = newOrder; order < oldOrder; ++order) {
-                     ++newOrders[getIndex(order, oldOrders)];
-                  }
+            if (newOrder > oldOrder) {
+               for (let order = oldOrder + 1; order <= newOrder; ++order) {
+                  --newOrders[getIndex(order, orders)];
                }
+            } else {
+               for (let order = newOrder; order < oldOrder; ++order) {
+                  ++newOrders[getIndex(order, orders)];
+               }
+            }
 
-               newOrders[index] = newOrder;
-               return newOrders;
-            });
+            newOrders[index] = newOrder;
+
+            onOrdersChange?.(newOrders);
          }
       }
    };
 
-   return <div className={className ?? styles.drag_container}>
+   return <div className={className ?? 'flex flex-col'}>
       <AnimatedOrder orders={orders} itemsRef={itemsRef} vertical={vertical}>
          {
-            Children.map(children, (child, index) => {
+            childs.map((child, index) => {
                return <div role="menuitem"
-                  draggable
+                  draggable={active ?? true}
+                  key={child.key}
                   tabIndex={-1}
                   ref={el => { itemsRef.current[index] = el; }}
                   onDragStart={e => onDragStart(vertical ? e.pageY : e.pageX)}
                   onDragOver={e => onDrag(vertical ? e.pageY : e.pageX)}
                   onDragEnd={onDragEnd}
-                  {...((itemsRef.current[index] == dragRef.current) ? { style: { opacity: 0 } } : {})}
+               // {...((itemsRef.current[index] === dragRef.current) ? { style: { opacity: 0 } } : {})}
                >
                   {child}
                </div>;

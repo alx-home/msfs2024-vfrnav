@@ -21,11 +21,11 @@ export default {
       addVariant('hocus-within', ['&:hover', '&:focus-within']);
       addVariant('group-hocus', [
         ':merge(.group):hover &',
-        ':merge(.group):focus &',
+        ':merge(.group):focus &'
       ]);
       addVariant('group-hocus-within', [
         ':merge(.group):hover &',
-        ':merge(.group):focus-within &',
+        ':merge(.group):focus-within &'
       ]);
     },
     container_queries

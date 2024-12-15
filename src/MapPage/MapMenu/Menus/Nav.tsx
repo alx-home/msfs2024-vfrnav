@@ -1,5 +1,5 @@
 
-import { Children, Dispatch, isValidElement, MouseEventHandler, PropsWithChildren, SetStateAction, useEffect, useRef, useState } from 'react';
+import { Children, Dispatch, isValidElement, MouseEventHandler, PropsWithChildren, SetStateAction, useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 
 import { Feature } from 'ol';
@@ -7,16 +7,16 @@ import VectorLayer from 'ol/layer/Vector';
 import { MapContext } from '@/MapPage/MapPage';
 
 import { Button } from '@/Utils/Button';
-import useKeyUp from '@/Events/KeyUp';
 import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 
 import newFileImg from '@/../public/new-file.svg';
 import importImg from '@/../public/import.svg';
 import editImg from "@/../public/edit.svg";
 import deleteImg from "@/../public/delete.svg";
+import { Draggable } from '@/Utils/Draggable';
 
 export class NavData {
-   constructor(public id: number, public name: string, public active: boolean, public shortName: string, public feature: Feature, public layer: VectorLayer) { }
+   constructor(public id: number, public order: number, public name: string, public active: boolean, public shortName: string, public feature: Feature, public layer: VectorLayer) { }
 };
 
 const Label = ({ name, shortName, editMode }: {
@@ -33,13 +33,14 @@ const Label = ({ name, shortName, editMode }: {
    </div>;
 };
 
-const Edit = ({ onClick, image, alt, background }: {
+const Edit = ({ onClick, image, alt, background, hidden }: {
    onClick: MouseEventHandler<HTMLButtonElement>,
    image: string | StaticImport,
    alt: string,
-   background: string
+   background: string,
+   hidden: boolean
 }) => {
-   return <button className={'flex w-11 h-11 hover:brightness-125 focus:border-2 focus:border-with ' + ' ' + background} onClick={onClick}>
+   return <button className={'flex w-11 h-11 hover:brightness-125 focus:border-2 focus:border-with ' + ' ' + background + (hidden ? ' overflow-hidden hidden' : '')} onClick={onClick}>
       <Image className='w-8 h-8 grow mt-auto mb-auto justify-center' src={image} alt={alt} />
    </button>;
 };
@@ -53,22 +54,33 @@ const Input = ({ mapContext, editMode, setEditMode, name, active }: {
 }) => {
    const textArea = useRef<HTMLInputElement | null>(null);
    useEffect(() => textArea.current?.focus(), [editMode]);
+   const [value, setValue] = useState(name);
 
-   return <input className={'bg-transparent h-8 pt-1 pl-2'} ref={textArea} value={name} style={editMode ? {} : { display: 'none' }}
-      onChange={e => mapContext.editNav(name, e.target.value)}
-      onBlur={() => setEditMode(false)}
+   return <input className={'bg-transparent h-8 pt-1 pl-2 pointer-events-auto'} ref={textArea} value={value} style={editMode ? {} : { display: 'none' }}
+      onBlur={e => {
+         mapContext.editNav(name, value)
+         setEditMode(false);
+      }}
+      onChange={() => { }}
       onKeyUp={e => {
+         setValue(e.currentTarget.value);
+
          if (e.key === 'Escape' || e.key === 'Enter') {
+            mapContext.editNav(name, value);
             setEditMode(false);
          }
       }}
    />;
 };
 
-export const NavItem = ({ name, shortName, feature, active, mapContext }:
-   {
-      active: boolean, name: string, shortName: string, feature: Feature, mapContext: MapContext
-   }) => {
+export const NavItem = ({ name, shortName, feature, active, mapContext, setDraggable }: {
+   active: boolean,
+   name: string,
+   shortName: string,
+   feature: Feature,
+   mapContext: MapContext,
+   setDraggable?: Dispatch<SetStateAction<number>>
+}) => {
    const [editMode, setEditMode] = useState(false);
    const [hover, setHover] = useState(false);
    const [focused, setFocused] = useState(false);
@@ -82,16 +94,33 @@ export const NavItem = ({ name, shortName, feature, active, mapContext }:
    }, [active]);
 
 
-   return <div className={'flex flex-row grow gap-2 ' + (active ? 'border-l-2 border-msfs' : '')}
+   useEffect(() => {
+      setDraggable?.(draggable => draggable + 1);
+      return () => {
+         if (editMode) {
+            setDraggable?.(draggable => draggable - 1);
+         }
+      };
+   }, []);
+
+   useEffect(() => {
+      if (editMode) {
+         setDraggable?.(draggable => draggable + 1);
+      } else {
+         setDraggable?.(draggable => draggable - 1);
+      }
+   }, [editMode])
+
+   return <div className={'flex flex-row grow gap-2' + (active ? ' border-l-2 border-msfs' : '')}
       onMouseEnter={e => setHover(true)}
       onMouseLeave={e => setHover(false)}>
-      <Button className='flex flex-row grow @container/label'
+      <Button className={'flex flex-row grow @container/label'}
+         active={!editMode}
          onClick={() => mapContext.setNavData((navData) => {
             const newData = [...navData];
             const elem = newData.find(e => e.name === name);
             if (elem) {
                elem.active = !active;
-               console.log(elem.active)
             }
             return newData;
          })}>
@@ -103,8 +132,8 @@ export const NavItem = ({ name, shortName, feature, active, mapContext }:
          onFocus={() => setFocused(true)}
          onBlur={() => setFocused(false)}
       >
-         <Edit onClick={() => setEditMode(true)} image={editImg} alt='edit' background='bg-msfs' />
-         <Edit onClick={() => { mapContext.removeNav(name); mapContext.removeFeature(feature); }} image={deleteImg} alt='delete' background='bg-red-600' />
+         <Edit onClick={() => setEditMode(true)} image={editImg} alt='edit' background='bg-msfs' hidden={!(hover || focused)} />
+         <Edit onClick={() => { mapContext.removeNav(name); mapContext.removeFeature(feature); }} image={deleteImg} alt='delete' background='bg-red-600' hidden={!(hover || focused)} />
       </div>
    </div>;
 };
@@ -114,24 +143,59 @@ const Add = ({ name, image, onClick }: PropsWithChildren<{
    image: string | StaticImport,
    onClick: MouseEventHandler<HTMLButtonElement>
 }>) => {
-   return <Button onClick={onClick} className='px-2 min-h-8 pt-1 flex flex-row grow @container'>
+   return <Button onClick={onClick} active={true} className='px-2 min-h-8 pt-1 flex flex-row grow @container'>
       <div className='hidden @[47px]:flex'>{name}</div>
       <div className='flex grow justify-center @[47px]:hidden'><Image src={image} alt={name} className='invert' /></div>
    </Button>;
 };
 
-export const Nav = ({ children, mapContext }: PropsWithChildren<{ mapContext: MapContext }>) => {
+const Item = ({ children, className, setDraggable }: PropsWithChildren<{
+   order: number,
+   className: string,
+   setDraggable: Dispatch<SetStateAction<number>>
+}>) => {
+   const child = useMemo(() => {
+      const child = Children.only(children);
+      if (isValidElement(child)) {
+         return {
+            ...child, props: {
+               ...child.props,
+               setDraggable: setDraggable
+            }
+         };
+      }
+      return undefined;
+   }, [children, setDraggable]);
+
+   return <div className={className}>{child}</div>;
+};
+
+export const Nav = ({ children, mapContext }: PropsWithChildren<{
+   mapContext: MapContext
+}>) => {
+   const key = mapContext.navData.reduce((prev, elem) => { return prev + ";" + elem.name; }, "");
+   const [draggable, setDraggable] = useState(0);
+   const childs = useMemo(() => Children.toArray(children).filter(child => isValidElement(child)).map((child, index) => {
+      return <Item key={mapContext.navData[index].id} order={mapContext.navData[index].order} className='flex gap-x-4' setDraggable={setDraggable}>
+         {child}
+      </Item>
+   })
+      , [children]);
+
    return <>
       <div className="flex min-h-12 shrink-0 items-center justify-between ps-1 text-2xl font-semibold">
          Nav's
       </div>
       <menu className={"flex flex-col gap-3"}>
-         {Children.map(children, (child) => {
-            if (!isValidElement(child)) return <></>;
-            return <div className='flex gap-x-4'>
-               {child}
-            </div>
-         })}
+         <Draggable key={key} className='@container flex flex-col w-full overflow-hidden gap-2'
+            vertical={true}
+            active={draggable === 0}
+            onOrdersChange={(orders: number[]) => {
+               mapContext.reorderNav(orders);
+            }}
+         >
+            {childs}
+         </Draggable>
          <div className='flex gap-x-4'>
             <Add name='Add' image={newFileImg} onClick={e => { mapContext.addNav() }} />
             <Add name='Import' image={importImg} onClick={e => { }} />

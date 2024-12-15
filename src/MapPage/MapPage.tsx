@@ -7,7 +7,7 @@ import { OlWMTSLayer } from "@/Ol/layers/OlWMTSLayer";
 import { OlMap } from "@/Ol/OlMap";
 import { getTopLeft, getWidth } from 'ol/extent.js';
 import { get as getProjection } from 'ol/proj.js';
-import { Dispatch, MutableRefObject, SetStateAction, useMemo, useRef, useState } from "react";
+import { Dispatch, MutableRefObject, SetStateAction, useEffect, useMemo, useRef, useState } from "react";
 
 import flightPlanImg from '@/../public/flight-plan.svg';
 import layersImg from '@/../public/layers.svg';
@@ -16,6 +16,7 @@ import Image from "next/image";
 import { Feature } from "ol";
 import VectorLayer from "ol/layer/Vector";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
+import { OnLayerChange } from './MapMenu/Menus/Layers';
 
 const projection = getProjection('EPSG:3857')!;
 const projectionExtent = projection.getExtent();
@@ -35,10 +36,10 @@ export class MapContext {
       public readonly cancelRef: MutableRefObject<(() => void) | undefined>,
       public readonly addFeatureRef: MutableRefObject<((feature: Feature) => void) | undefined>,
       public readonly removeFeatureRef: MutableRefObject<((feature: Feature) => void) | undefined>,
-      public readonly setNavData: Dispatch<SetStateAction<NavData[]>>,
-      public readonly setCounter: Dispatch<SetStateAction<number>>,
       public readonly navData: NavData[],
+      public readonly setNavData: Dispatch<SetStateAction<NavData[]>>,
       public readonly counter: number,
+      public readonly setCounter: Dispatch<SetStateAction<number>>,
       public readonly flash: boolean,
       public readonly setFlash: Dispatch<SetStateAction<boolean>>,
       public readonly flashKey: number,
@@ -56,6 +57,12 @@ export class MapContext {
 
    public addNav() {
       this.addNavRef?.current?.();
+   }
+
+   public reorderNav(orders: number[]) {
+      this.setNavData(data => {
+         return orders.map((order, index) => ({ ...data[index], order: order }))
+      })
    }
 
    public cancel() {
@@ -83,8 +90,15 @@ export class MapContext {
    public removeNav(name: string) {
       this.setNavData(items => {
          const newItems = [...items];
-         newItems.splice(newItems.findIndex((item) => item.name === name), 1);
-         return newItems;
+         const deleteIndex = newItems.findIndex((item) => item.name === name);
+         const deleteOrder = newItems[deleteIndex].order;
+         newItems.splice(deleteIndex, 1);
+         return newItems.map(elem => {
+            if (elem.order > deleteOrder) {
+               return { ...elem, order: (elem.order - 1) };
+            }
+            return elem;
+         });
       });
    }
 
@@ -107,7 +121,7 @@ export class MapContext {
       const [flashKey, setFlashKey] = useState(0);
       const [aircraftSpeed, setAircraftSpeed] = useState(95);
 
-      const context = useMemo<MapContext>(() => new MapContext(addNav, cancel, addFeature, removeFeature, setNavData, setCounter, navData, counter, flash, setFlash, flashKey, setFlashKey, aircraftSpeed, setAircraftSpeed), [navData, counter, flash, flashKey, aircraftSpeed]);
+      const context = useMemo<MapContext>(() => new MapContext(addNav, cancel, addFeature, removeFeature, navData, setNavData, counter, setCounter, flash, setFlash, flashKey, setFlashKey, aircraftSpeed, setAircraftSpeed), [navData, counter, flash, flashKey, aircraftSpeed]);
 
       return context;
    };
@@ -196,6 +210,21 @@ export const MapPage = ({ active }: {
       active: true
    })));
    const mapContext = MapContext.use();
+   const onLayerChange = useMemo<OnLayerChange>(() => (values) =>
+      setLayers(layers => {
+         const newLayers = [...layers];
+
+         values.forEach(elem => {
+            if (elem.order !== undefined) {
+               newLayers[elem.index].order = elem.order;
+            }
+            if (elem.active !== undefined) {
+               newLayers[elem.index].active = elem.active;
+            }
+         });
+
+         return newLayers;
+      }), []);
 
    return <div className='relative grow h-100' style={active ? {} : { display: 'none' }}>
       <OlMap id='map' className='absolute w-full h-full top-0 left-0' mapContext={mapContext}>
@@ -206,7 +235,7 @@ export const MapPage = ({ active }: {
             onDrawEnd={(feature: Feature, layer: VectorLayer) => {
                mapContext.setNavData(items => {
                   const { counter } = mapContext;
-                  return [...items, { id: counter, active: active, name: `New Nav ${counter}`, shortName: `${counter}`, feature: feature, layer: layer }];
+                  return [...items, { id: counter, order: items.length, active: active, name: `New Nav ${counter}`, shortName: `${counter}`, feature: feature, layer: layer }];
                });
                mapContext.setCounter(counter => counter + 1);
             }} />
@@ -217,24 +246,9 @@ export const MapPage = ({ active }: {
             <Overlay menu={menu} setMenu={setMenu} setOpen={setOpen} />
          </div>
          <div className="flex flex-row pointer-events-auto">
-            <MapMenu open={open} setOpen={setOpen} menu={menu} layers={layers}
+            <MapMenu key={"map-menu"} open={open} setOpen={setOpen} menu={menu} layers={layers}
                mapContext={mapContext}
-               onLayerChange={(values) =>
-                  setLayers(layers => {
-                     const newLayers = [...layers];
-
-                     values.forEach(elem => {
-                        if (elem.order !== undefined) {
-                           newLayers[elem.index].order = elem.order;
-                        }
-                        if (elem.active !== undefined) {
-                           newLayers[elem.index].active = elem.active;
-                        }
-                     });
-
-                     return newLayers;
-                  })
-               } />
+               onLayerChange={onLayerChange} />
          </div>
       </div>
    </div>;

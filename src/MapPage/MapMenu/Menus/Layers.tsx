@@ -1,7 +1,7 @@
 'use client'
 
 import { Draggable } from "@/Utils/Draggable";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import Image from "next/image";
 
@@ -37,6 +37,11 @@ const LayerComp = ({ src, alt, onActiveChange }: Layer & { onActiveChange: (acti
 export type OnLayerChange = (layers: { index: number, order?: number, active?: boolean }[]) => void;
 
 export const Layers = ({ layers, onLayerChange }: { layers: Layer[], onLayerChange: OnLayerChange }) => {
+   const childs = useMemo(() => layers.map((layer, index) =>
+      <LayerComp order={layer.order} key={layer.alt} src={layer.src} alt={layer.alt}
+         onActiveChange={active => onLayerChange([{ index: index, active: active }])} />
+   ), [layers]);
+
    return <>
       <div className="flex min-h-12 shrink-0 items-center justify-between ps-1 text-2xl font-semibold">
          Layers
@@ -46,10 +51,7 @@ export const Layers = ({ layers, onLayerChange }: { layers: Layer[], onLayerChan
          onOrdersChange={(orders: number[]) => {
             onLayerChange(orders.map((order, index) => ({ index: index, order: order })));
          }}>
-         {layers.map((layer, index) =>
-            <LayerComp order={layer.order} key={layer.alt} src={layer.src} alt={layer.alt}
-               onActiveChange={active => onLayerChange([{ index: index, active: active }])} />
-         )}
+         {childs}
       </Draggable>
    </>;
 };
