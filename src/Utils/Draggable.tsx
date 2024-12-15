@@ -1,4 +1,4 @@
-import { PropsWithChildren, Children, useState, useEffect, useRef, isValidElement, useMemo, ReactElement, JSXElementConstructor } from 'react';
+import { PropsWithChildren, Children, useState, useRef, isValidElement, useMemo } from 'react';
 
 import { AnimatedOrder } from './AnimatedOrder';
 
@@ -73,7 +73,7 @@ export const Draggable = ({ children, vertical, onOrdersChange, className, activ
 
    const onDrag = (mousePos: number) => {
       if (dragRef.current && boundings) {
-         let newOrder = boundings.findIndex((box) => box.Collapse(mousePos));
+         const newOrder = boundings.findIndex((box) => box.Collapse(mousePos));
 
          if (newOrder < 0) {
             return;

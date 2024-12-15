@@ -1,5 +1,5 @@
 import useMouseRelease from '@/Events/MouseRelease';
-import { PropsWithChildren, MouseEventHandler, useState, useRef, useEffect } from 'react';
+import { PropsWithChildren, MouseEventHandler, useRef, useEffect } from 'react';
 
 export const Button = ({ children, onClick, className, active }: PropsWithChildren<{
    onClick?: MouseEventHandler<HTMLButtonElement>,

@@ -1,4 +1,4 @@
-import { Page } from "@/app/page";
+import { Page } from "@/app/App";
 import { useRef } from "react";
 
 export const Menu = ({ setPage, pages, activePage }: { pages: Page[], setPage: (page: string) => void, activePage: string }) => {

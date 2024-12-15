@@ -83,5 +83,5 @@ export const AnimatedOrder = ({ children, orders, itemsRef, vertical }: PropsWit
             order: order
          }
       };
-   })?.sort((left, right) => isValidElement(left) && isValidElement(right) ? (left.props as any).order - (right.props as any).order : 0)}</>
+   })?.sort((left, right) => left.props.order - right.props.order)}</>
 };
