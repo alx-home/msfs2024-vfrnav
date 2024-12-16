@@ -187,7 +187,7 @@ export const Nav = ({ children, mapContext }: PropsWithChildren<{
          Nav&apos;s
       </div>
       <menu className={"flex flex-col gap-2"}>
-         <Draggable key={key} className={'@container flex flex-col w-full overflow-hidden gap-y-2'}
+         <Draggable key={key} className={'@container flex flex-col w-full overflow-hidden gap-y-2 overflow-y-scroll'}
             vertical={true}
             active={draggable}
             onOrdersChange={(orders: number[]) => {
