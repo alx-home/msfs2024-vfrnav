@@ -1,6 +1,5 @@
 import { MapMenu, Menu } from "@/MapPage/MapMenu/MapMenu";
 import { NavData } from '@/MapPage/MapMenu/Menus/Nav';
-import { OlBingLayer } from "@/Ol/layers/OlBingLayer";
 import { OlOSMLayer } from "@/Ol/layers/OlOSMLayer";
 import { OlRouteLayer } from "@/Ol/layers/OlRoute";
 import { OlWMTSLayer } from "@/Ol/layers/OlWMTSLayer";
@@ -17,7 +16,6 @@ import { Feature } from "ol";
 import VectorLayer from "ol/layer/Vector";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import { OnLayerChange } from './MapMenu/Menus/Layers';
-import { OlWMSLayer } from "@/Ol/layers/OlWMSLayer";
 
 const projection = getProjection('EPSG:3857')!;
 const projectionExtent = projection.getExtent();
@@ -160,7 +158,7 @@ const Overlay = ({ menu, setMenu, setOpen }: {
 const SpinAnimation = ({ mapContext }: {
    mapContext: MapContext
 }) => {
-   return <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center pointer-events-auto" >
+   return <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center" >
       <span key={mapContext.flashKey}
          className={"animate-ping-1 m-auto inline-flex aspect-square w-2/4 rounded-full bg-sky-400 opacity-75 justify-center"
             + (mapContext.flash ? '' : ' hidden')}
@@ -206,6 +204,11 @@ export const MapPage = ({ active }: {
          olLayer: <OlOSMLayer key="open-topo" url="https://tile.opentopomap.org/{z}/{x}/{y}.png" crossOrigin={null} />,
          src: '/opentopo.png',
          alt: 'open topo layer'
+      },
+      {
+         olLayer: <OlOSMLayer key="map-for-free" url="https://maps-for-free.com/layer/relief/z{z}/row{y}/{z}_{x}-{y}.jpg" crossOrigin={null} />,
+         src: '/opentopo.png',
+         alt: 'map for free layer'
       },
       {
          olLayer: <OlOSMLayer key="google" url="https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}" crossOrigin={null} />,
