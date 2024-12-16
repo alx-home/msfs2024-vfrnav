@@ -18,6 +18,7 @@ export const Draggable = ({ children, vertical, onOrdersChange, className, activ
    active?: boolean
 }>) => {
    const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
+   const ref = useRef<HTMLDivElement | null>(null);
    const [boundings, setBoundings] = useState<Box[]>();
    const dragRef = useRef<HTMLDivElement | null>();
 
@@ -56,7 +57,8 @@ export const Draggable = ({ children, vertical, onOrdersChange, className, activ
             const bounding = boundings[order];
 
             if (vertical) {
-               if (bounding.Collapse(mousePos - (vertical ? window.scrollY : window.scrollX))) {
+               console.log(ref.current?.scrollTop)
+               if (bounding.Collapse(mousePos + (vertical ? window.scrollY + (ref.current?.scrollTop ?? 0) : window.scrollX + (ref.current?.scrollLeft ?? 0)))) {
                   dragRef.current = getRef(order);
                   dragRef.current?.focus()
                   break;
@@ -73,7 +75,7 @@ export const Draggable = ({ children, vertical, onOrdersChange, className, activ
 
    const onDrag = (mousePos: number) => {
       if (dragRef.current && boundings) {
-         const newOrder = boundings.findIndex((box) => box.Collapse(mousePos));
+         const newOrder = boundings.findIndex((box) => box.Collapse(mousePos + (vertical ? window.scrollY + (ref.current?.scrollTop ?? 0) : window.scrollX + (ref.current?.scrollLeft ?? 0))));
 
          if (newOrder < 0) {
             return;
@@ -101,7 +103,7 @@ export const Draggable = ({ children, vertical, onOrdersChange, className, activ
       }
    };
 
-   return <div className={className ?? 'flex flex-col'}>
+   return <div ref={ref} className={className ?? 'flex flex-col'}>
       <AnimatedOrder orders={orders} itemsRef={itemsRef} vertical={vertical}>
          {
             childs.map((child, index) => {

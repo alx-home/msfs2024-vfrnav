@@ -201,19 +201,19 @@ export const MapPage = ({ active }: {
          alt: 'dsf layer'
       },
       {
-         olLayer: <OlOSMLayer key="open-topo" url="https://tile.opentopomap.org/{z}/{x}/{y}.png" crossOrigin={null} />,
-         src: '/opentopo.png',
-         alt: 'open topo layer'
-      },
-      {
          olLayer: <OlOSMLayer key="map-for-free" url="https://maps-for-free.com/layer/relief/z{z}/row{y}/{z}_{x}-{y}.jpg" crossOrigin={null} />,
-         src: '/opentopo.png',
+         src: '/map4free.png',
          alt: 'map for free layer'
       },
       {
          olLayer: <OlOSMLayer key="google" url="https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}" crossOrigin={null} />,
          src: '/bing.png',
          alt: 'google layer'
+      },
+      {
+         olLayer: <OlOSMLayer key="open-topo" url="https://tile.opentopomap.org/{z}/{x}/{y}.png" crossOrigin={null} />,
+         src: '/opentopo.png',
+         alt: 'open topo layer'
       },
       {
          olLayer: <OlOSMLayer key="ifr low" url="https://maps.iflightplanner.com/Maps/Tiles/IFRLow/Z{z}/{y}/{x}.png" crossOrigin={null} />,

@@ -37,6 +37,9 @@ export const OlLayer = ({ opacity, source, map, order, active }: OlLayerProp & {
       console.log(active)
       if (active !== undefined) {
          layerRef.current?.setVisible(active);
+         if (order) {
+            layerRef.current?.setZIndex(order);
+         }
       }
    }, [active]);
 
