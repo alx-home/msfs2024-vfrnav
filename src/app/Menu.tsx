@@ -24,7 +24,7 @@ export const Menu = ({ setPage, pages, activePage }: { pages: (Page | Space)[], 
                }}
             </button>;
          } else {
-            return <div className='my-1' key={'space_' + index}></div>;
+            return _page.elem;
          }
       }
       )}

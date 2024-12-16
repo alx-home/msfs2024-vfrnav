@@ -1,42 +1,19 @@
-import { OlLayerProp } from "./OlLayer";
-import TileLayer from "ol/layer/Tile";
+import { OlLayer, OlLayerProp } from "./OlLayer";
 import { OSM } from "ol/source";
-import { useEffect, useRef } from "react";
+import { useMemo } from "react";
 
 export const OlOSMLayer = ({
    opacity,
    map,
+   url,
+   crossOrigin,
    order,
    active
 }: OlLayerProp & {
+   url?: string,
+   crossOrigin?: string | null,
    opacity?: number
 }) => {
-   const layerRef = useRef<TileLayer>();
-
-   useEffect(() => {
-      const tileLayer = new TileLayer({
-         opacity: opacity,
-         source: new OSM()
-      });
-
-      layerRef.current = tileLayer;
-
-      map?.addLayer(tileLayer);
-
-      return () => { map?.removeLayer(tileLayer); };
-   }, [map, opacity]);
-
-   useEffect(() => {
-      if (order != undefined) {
-         layerRef.current?.setZIndex(order);
-      }
-   }, [order]);
-
-   useEffect(() => {
-      if (active != undefined) {
-         layerRef.current?.setVisible(active);
-      }
-   }, [active]);
-
-   return <></>;
+   const source = useMemo(() => new OSM({ url: url, crossOrigin: crossOrigin }), []);
+   return <OlLayer source={source} map={map} opacity={opacity} order={order} active={active} />;
 };

@@ -7,7 +7,7 @@ import { OlWMTSLayer } from "@/Ol/layers/OlWMTSLayer";
 import { OlMap } from "@/Ol/OlMap";
 import { getTopLeft, getWidth } from 'ol/extent.js';
 import { get as getProjection } from 'ol/proj.js';
-import { Dispatch, MutableRefObject, SetStateAction, useCallback, useMemo, useRef, useState } from "react";
+import { Dispatch, MutableRefObject, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import flightPlanImg from '@/../public/flight-plan.svg';
 import layersImg from '@/../public/layers.svg';
@@ -17,6 +17,7 @@ import { Feature } from "ol";
 import VectorLayer from "ol/layer/Vector";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import { OnLayerChange } from './MapMenu/Menus/Layers';
+import { OlWMSLayer } from "@/Ol/layers/OlWMSLayer";
 
 const projection = getProjection('EPSG:3857')!;
 const projectionExtent = projection.getExtent();
@@ -175,6 +176,7 @@ const SpinAnimation = ({ mapContext }: {
 export const MapPage = ({ active }: {
    active: boolean
 }) => {
+   const [opacity, setOpacity] = useState(' opacity-0');
    const [open, setOpen] = useState(false);
    const [menu, setMenu] = useState<Menu>(Menu.layers);
    const [layers, setLayers] = useState([
@@ -192,22 +194,53 @@ export const MapPage = ({ active }: {
             }}
          />,
          src: '/oaci.png',
-         alt: 'oaci layer'
+         alt: 'oaci layer',
+         active: true
+      },
+      {
+         olLayer: <OlOSMLayer key="dsf" url="https://secais.dfs.de/static-maps/icao500/tiles/{z}/{x}/{y}.png" crossOrigin={null} />,
+         src: '/dsf.png',
+         alt: 'dsf layer'
+      },
+      {
+         olLayer: <OlOSMLayer key="open-topo" url="https://tile.opentopomap.org/{z}/{x}/{y}.png" crossOrigin={null} />,
+         src: '/opentopo.png',
+         alt: 'open topo layer'
+      },
+      {
+         olLayer: <OlOSMLayer key="google" url="https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}" crossOrigin={null} />,
+         src: '/bing.png',
+         alt: 'google layer'
+      },
+      {
+         olLayer: <OlOSMLayer key="ifr low" url="https://maps.iflightplanner.com/Maps/Tiles/IFRLow/Z{z}/{y}/{x}.png" crossOrigin={null} />,
+         src: '/ifr_low.png',
+         alt: 'ifr low layer'
+      },
+      {
+         olLayer: <OlOSMLayer key="ifr high" url="https://maps.iflightplanner.com/Maps/Tiles/IFRHigh/Z{z}/{y}/{x}.png" crossOrigin={null} />,
+         src: '/ifr_high.png',
+         alt: 'ifr high layer'
+      },
+      {
+         olLayer: <OlOSMLayer key="sectional" url="https://maps.iflightplanner.com/Maps/Tiles/Sectional/Z{z}/{y}/{x}.png" crossOrigin={null} />,
+         src: '/sectional.png',
+         alt: 'sectional layer'
       },
       {
          olLayer: <OlOSMLayer key="osm" />,
          src: '/osm.png',
          alt: 'osm layer'
       },
-      {
-         olLayer: <OlBingLayer key="bing" />,
-         src: '/bing.png',
-         alt: 'bing layer'
-      }
+      // {
+      //    olLayer: <OlBingLayer key="bing" />,
+      //    src: '/bing.png',
+      //    alt: 'bing layer'
+      // }
    ].map((elem, index) => ({
       ...elem,
       order: index,
-      active: true
+      active: elem.active ?? false
    })));
    const mapContext = MapContext.use();
    const onLayerChange = useCallback<OnLayerChange>((values) =>
@@ -226,9 +259,17 @@ export const MapPage = ({ active }: {
          return newLayers;
       }), [setLayers]);
 
-   return <div className='relative grow h-100' style={active ? {} : { display: 'none' }}>
+   useEffect(() => {
+      if (active) {
+         setOpacity(' opacity-100');
+      } else {
+         setOpacity(' opacity-0');
+      }
+   }, [active]);
+
+   return <div className={'transition transition-std relative grow h-100' + opacity} style={active ? {} : { display: 'none' }}>
       <OlMap id='map' className='absolute w-full h-full top-0 left-0' mapContext={mapContext}>
-         {layers.map(layer => ({ ...layer.olLayer, props: { ...layer.olLayer.props, order: layer.order, active: layer.active } }))}
+         {layers.map(layer => ({ ...layer.olLayer, props: { ...layer.olLayer.props, order: layers.length - 1 - layer.order, active: layer.active } }))}
          <OlRouteLayer
             mapContext={mapContext}
             order={layers.length}

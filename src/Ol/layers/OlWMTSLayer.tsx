@@ -1,10 +1,9 @@
 import { Extent } from "ol/extent";
 import { Projection } from "ol/proj";
-import { OlLayerProp } from "./OlLayer";
-import TileLayer from "ol/layer/Tile";
-import { WMTS } from "ol/source";
+import { OlLayer, OlLayerProp } from "./OlLayer";
+import { TileImage, WMTS } from "ol/source";
 import WMTSTileGrid from "ol/tilegrid/WMTS";
-import { useEffect, useRef } from "react";
+import { useMemo } from "react";
 
 export const OlWMTSLayer = ({
    opacity,
@@ -36,43 +35,16 @@ export const OlWMTSLayer = ({
    style?: 'normal',
    wrapX?: boolean,
 } & OlLayerProp) => {
-
-   const layerRef = useRef<TileLayer>();
-
-   useEffect(() => {
-      const tileLayer = new TileLayer({
-         opacity: opacity,
-         source: new WMTS({
-            url: url,
-            layer: layer,
-            matrixSet: matrixSet ?? 'PM',
-            version: version,
-            format: format ?? 'image/jpeg',
-            projection: projection,
-            tileGrid: new WMTSTileGrid(tileGrid),
-            style: style ?? 'normal',
-            wrapX: wrapX ?? true,
-         })
-      });
-
-      layerRef.current = tileLayer;
-
-      map?.addLayer(tileLayer);
-
-      return () => { map?.removeLayer(tileLayer); };
-   }, [map, format, layer, matrixSet, opacity, projection, style, tileGrid, url, version, wrapX]);
-
-   useEffect(() => {
-      if (order != undefined) {
-         layerRef.current?.setZIndex(order);
-      }
-   }, [order]);
-
-   useEffect(() => {
-      if (active != undefined) {
-         layerRef.current?.setVisible(active);
-      }
-   }, [active]);
-
-   return <></>;
+   const source = useMemo<TileImage>(() => new WMTS({
+      url: url,
+      layer: layer,
+      matrixSet: matrixSet ?? 'PM',
+      version: version,
+      format: format ?? 'image/jpeg',
+      projection: projection,
+      tileGrid: new WMTSTileGrid(tileGrid),
+      style: style ?? 'normal',
+      wrapX: wrapX ?? true,
+   }), []);
+   return <OlLayer source={source} map={map} opacity={opacity} order={order} active={active} />;
 };

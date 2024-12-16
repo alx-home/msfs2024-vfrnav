@@ -13,6 +13,7 @@ import mapImg from '@/../public/map.svg';
 import navlogImg from '@/../public/navlog.svg';
 import settingsImg from '@/../public/settings.svg';
 import creditsImg from '@/../public/credits.svg';
+import { CreditsPage } from '@/CreditsPage/CreditsPage';
 
 export class Page {
   public readonly type: string = 'page';
@@ -35,8 +36,9 @@ export class Page {
 };
 
 export class Space {
+  constructor(public readonly index: number) { }
   public readonly type: string = 'space';
-  public readonly elem: JSX.Element = <></>;
+  public readonly elem: JSX.Element = <div className='my-1' key={'space_' + this.index}></div>;
 };
 
 export const App = () => {
@@ -59,18 +61,17 @@ export const App = () => {
       elem: <div key="settings" />,
       disabled: true
     }),
-    new Space(),
+    new Space(1),
     new Page({
       name: "credits",
       icon: <Image src={creditsImg} alt='credits' />,
-      elem: <div key="credits" />,
-      disabled: true
+      elem: <CreditsPage key="credits" active={page === "credits"} />
     })
   ];
 
   return (
     <MouseContextProvider>
-      <div className='Home'>
+      <div key='home' className='Home'>
         <Menu pages={pages} setPage={page => setPage(page)} activePage={page} />
         {pages.map(elem => elem.elem)}
       </div>
