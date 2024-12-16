@@ -17,7 +17,8 @@ export const Button = ({ children, onClick, className, active }: PropsWithChildr
    }, [mouseLeave, active]);
 
 
-   return <div className={"grow bg-gray-700 p-1 shadow-md flex text-left hover:bg-gray-800 hover:drop-shadow-xl rounded-sm border-2 border-gray-900 has-[:focus]:border-msfs has-[:hover]:border-msfs"}>
+   return <div className={"group grow bg-gray-700 p-1 shadow-md flex text-left rounded-sm border-2 border-gray-900"
+      + (active ? ' hocus:bg-gray-800 hocus:drop-shadow-xl hocus:border-msfs has-[:focus]:border-msfs has-[:hover]:border-msfs cursor-pointer' : ' opacity-30')}>
       <button className='grow flex'
          ref={elemRef}
          onClick={e => onClick?.(e)}

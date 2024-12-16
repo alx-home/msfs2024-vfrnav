@@ -11,6 +11,7 @@ import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 
 import newFileImg from '@/../public/new-file.svg';
 import importImg from '@/../public/import.svg';
+import exportImg from '@/../public/export.svg';
 import editImg from "@/../public/edit.svg";
 import deleteImg from "@/../public/delete.svg";
 import { Draggable } from '@/Utils/Draggable';
@@ -109,7 +110,7 @@ export const NavItem = ({ name, shortName, feature, active, mapContext, setDragg
       }
    }, [editMode, setDraggable])
 
-   return <div className={'flex flex-row grow gap-2' + (active ? ' border-l-2 border-msfs' : '')}
+   return <div className={'flex flex-row grow hover:gap-x-2' + (active ? ' border-l-2 border-msfs' : '')}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}>
       <Button className={'flex flex-row grow @container/label'}
@@ -136,12 +137,13 @@ export const NavItem = ({ name, shortName, feature, active, mapContext, setDragg
    </div>;
 };
 
-const Add = ({ name, image, onClick }: PropsWithChildren<{
+const Add = ({ name, image, onClick, enabled }: PropsWithChildren<{
    name: string,
    image: string | StaticImport,
-   onClick: MouseEventHandler<HTMLButtonElement>
+   onClick: MouseEventHandler<HTMLButtonElement>,
+   enabled?: boolean
 }>) => {
-   return <Button onClick={onClick} active={true} className='px-2 min-h-8 pt-1 flex flex-row grow @container'>
+   return <Button onClick={onClick} active={enabled ?? true} className='px-2 min-h-8 pt-1 flex flex-row grow @container'>
       <div className='hidden @[47px]:flex'>{name}</div>
       <div className='flex grow justify-center @[47px]:hidden'><Image src={image} alt={name} className='invert' /></div>
    </Button>;
@@ -165,7 +167,7 @@ const Item = ({ children, className, setDraggable }: PropsWithChildren<{
       return undefined;
    }, [children, setDraggable]);
 
-   return <div className={className}>{child}</div>;
+   return <div className={className + ' gap-x-0'}>{child}</div>;
 };
 
 export const Nav = ({ children, mapContext }: PropsWithChildren<{
@@ -184,8 +186,8 @@ export const Nav = ({ children, mapContext }: PropsWithChildren<{
       <div className="flex min-h-12 shrink-0 items-center justify-between ps-1 text-2xl font-semibold">
          Nav&apos;s
       </div>
-      <menu className={"flex flex-col gap-3"}>
-         <Draggable key={key} className='@container flex flex-col w-full overflow-hidden gap-2'
+      <menu className={"flex flex-col gap-2"}>
+         <Draggable key={key} className={'@container flex flex-col w-full overflow-hidden gap-y-2'}
             vertical={true}
             active={draggable}
             onOrdersChange={(orders: number[]) => {
@@ -194,10 +196,11 @@ export const Nav = ({ children, mapContext }: PropsWithChildren<{
          >
             {childs}
          </Draggable>
-         <div className='flex gap-x-4'>
+         <div className='flex gap-x-4 mt-2'>
             <Add name='Add' image={newFileImg} onClick={() => { mapContext.addNav() }} />
-            <Add name='Import' image={importImg} onClick={() => { }} />
+            <Add name='Import' image={importImg} enabled={false} onClick={() => { }} />
          </div>
+         <Add name='Export' image={exportImg} enabled={false} onClick={() => { }} />
       </menu>
    </>
 };
