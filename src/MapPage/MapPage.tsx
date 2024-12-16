@@ -160,11 +160,11 @@ const Overlay = ({ menu, setMenu, setOpen }: {
 const SpinAnimation = ({ mapContext }: {
    mapContext: MapContext
 }) => {
-   return <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center" >
+   return <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center pointer-events-auto" >
       <span key={mapContext.flashKey}
          className={"animate-ping-1 m-auto inline-flex aspect-square w-2/4 rounded-full bg-sky-400 opacity-75 justify-center"
             + (mapContext.flash ? '' : ' hidden')}
-         onAnimationIteration={() => mapContext.triggerFlash(false)}
+         onAnimationEnd={() => mapContext.triggerFlash(false)}
       >
          <h1 className="flex justify-center text-[2vw] m-auto">
             Start Drawing !
@@ -271,6 +271,7 @@ export const MapPage = ({ active }: {
       <OlMap id='map' className='absolute w-full h-full top-0 left-0' mapContext={mapContext}>
          {layers.map(layer => ({ ...layer.olLayer, props: { ...layer.olLayer.props, order: layers.length - 1 - layer.order, active: layer.active } }))}
          <OlRouteLayer
+            zIndex={layers.length}
             mapContext={mapContext}
             order={layers.length}
             onDrawEnd={(feature: Feature, layer: VectorLayer) => {

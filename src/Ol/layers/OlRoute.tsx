@@ -23,10 +23,12 @@ export const OlRouteLayer = ({
    map,
    mapContext,
    onDrawEnd,
-   order
+   order,
+   zIndex
 }: {
    mapContext: MapContext,
    onDrawEnd: (feature: Feature, layer: VectorLayer) => void,
+   zIndex: number
 } & OlLayerProp) => {
    const redMarker = useRef<HTMLImageElement>();
    const blueMarker = useRef<HTMLImageElement>();
@@ -178,6 +180,8 @@ export const OlRouteLayer = ({
             return [];
          }
       });
+
+      layer_.setZIndex(zIndex);
 
       if (layer.current) {
          map?.removeLayer(layer.current);
