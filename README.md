@@ -22,4 +22,19 @@ This is a pluggin for Microsoft simulator 2024 embeded EFB to retrieve what was 
 
 ## Credits / Crédits
 
-@todo
+### OpenLayer 
+- © <a href="https://github.com/openlayers/openlayers/blob/main/LICENSE.md" target="_blank">openlayers</a>. 
+<br>
+<br>
+
+### OpenLayer Layers 
+- © <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors. 
+- Microsoft <a className="ol-attribution-bing-tos" href="https://www.microsoft.com/maps/product/terms.html" target="_blank">Terms of Use</a>. 
+- Microsoft Terms of Use. 
+- Earthstar Geographics SIO. 
+- © 2024 TomTom. 
+<br>
+<br>
+
+### MSFS2024 VFRNav 
+- © <a href="https://github.com/alx-home/msfs2024-vfrnav/blob/master/LICENSE" target="_blank">MSFS2024 VFRNav&apos;</a>. 
