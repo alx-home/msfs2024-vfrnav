@@ -26,7 +26,7 @@ export const CreditsPage = ({ active }: {
       }>
          <Section title='OpenLayer'>
             <li>
-               © <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors.
+               © <a href="https://github.com/openlayers/openlayers/blob/main/LICENSE.md" target="_blank">openlayers</a>.
             </li>
          </Section>
          <Section title='OpenLayer Layers'>
@@ -48,7 +48,7 @@ export const CreditsPage = ({ active }: {
          </Section>
          <Section title='MSFS2024 VFRNav'>
             <li>
-               © <a href="https://www.openstreetmap.org/copyright" target="_blank">MSFS2024 VFRNav&apos;</a>.
+               © <a href="https://github.com/alx-home/msfs2024-vfrnav/blob/master/LICENSE" target="_blank">MSFS2024 VFRNav&apos;</a>.
             </li>
          </Section>
       </div>
