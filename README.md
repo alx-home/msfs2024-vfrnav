@@ -17,6 +17,8 @@ This is a pluggin for Microsoft simulator 2024 embeded EFB to retrieve what was 
 <br>
 <br> 
 
+![demo](https://github.com/user-attachments/assets/d52f3cd8-213a-48b4-a0e0-20eb25aed108) 
+
 ## Getting Started / Pour bien démarrer
 
 @todo
