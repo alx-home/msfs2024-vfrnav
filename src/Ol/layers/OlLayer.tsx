@@ -4,19 +4,21 @@ import { TileImage } from "ol/source";
 import { useEffect, useRef } from "react";
 
 export class OlLayerProp {
-   constructor(public order?: number, public active?: boolean, public map?: Map) { }
+   constructor(public order?: number, public active?: boolean, public map?: Map, public maxZoom?: number, public minZoom?: number) { }
 }
 
-export const OlLayer = ({ opacity, source, map, order, active }: OlLayerProp & {
+export const OlLayer = ({ opacity, source, map, order, active, maxZoom, minZoom }: OlLayerProp & {
    opacity?: number,
-   source: TileImage,
+   source: TileImage
 }) => {
    const layerRef = useRef<TileLayer>();
 
    useEffect(() => {
       const tileLayer = new TileLayer({
          opacity: opacity,
-         source: source
+         source: source,
+         maxZoom: maxZoom,
+         minZoom: minZoom
       });
 
       layerRef.current = tileLayer;

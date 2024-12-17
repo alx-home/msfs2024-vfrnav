@@ -191,53 +191,53 @@ export const MapPage = ({ active }: {
                matrixIds: matrixIds,
             }}
          />,
-         src: '/oaci.png',
+         src: '/oaci.jpg',
          alt: 'oaci layer',
          active: true
       },
       {
          olLayer: <OlOSMLayer key="dsf" url="https://secais.dfs.de/static-maps/icao500/tiles/{z}/{x}/{y}.png" crossOrigin={null} />,
-         src: '/dsf.png',
+         src: '/dsf.jpg',
          alt: 'dsf layer'
       },
       {
          olLayer: <OlOSMLayer key="map-for-free" url="https://maps-for-free.com/layer/relief/z{z}/row{y}/{z}_{x}-{y}.jpg" crossOrigin={null} />,
-         src: '/map4free.png',
+         src: '/map4free.jpg',
          alt: 'map for free layer'
       },
       {
          olLayer: <OlOSMLayer key="google" url="https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}" crossOrigin={null} />,
-         src: '/bing.png',
+         src: '/bing.jpg',
          alt: 'google layer'
       },
       {
          olLayer: <OlOSMLayer key="open-topo" url="https://tile.opentopomap.org/{z}/{x}/{y}.png" crossOrigin={null} />,
-         src: '/opentopo.png',
+         src: '/opentopo.jpg',
          alt: 'open topo layer'
       },
       {
          olLayer: <OlOSMLayer key="ifr low" url="https://maps.iflightplanner.com/Maps/Tiles/IFRLow/Z{z}/{y}/{x}.png" crossOrigin={null} />,
-         src: '/ifr_low.png',
+         src: '/ifr_low.jpg',
          alt: 'ifr low layer'
       },
       {
          olLayer: <OlOSMLayer key="ifr high" url="https://maps.iflightplanner.com/Maps/Tiles/IFRHigh/Z{z}/{y}/{x}.png" crossOrigin={null} />,
-         src: '/ifr_high.png',
+         src: '/ifr_high.jpg',
          alt: 'ifr high layer'
       },
       {
          olLayer: <OlOSMLayer key="sectional" url="https://maps.iflightplanner.com/Maps/Tiles/Sectional/Z{z}/{y}/{x}.png" crossOrigin={null} />,
-         src: '/sectional.png',
+         src: '/sectional.jpg',
          alt: 'sectional layer'
       },
       {
          olLayer: <OlOSMLayer key="osm" />,
-         src: '/osm.png',
+         src: '/osm.jpg',
          alt: 'osm layer'
       },
       // {
       //    olLayer: <OlBingLayer key="bing" />,
-      //    src: '/bing.png',
+      //    src: '/bing.jpg',
       //    alt: 'bing layer'
       // }
    ].map((elem, index) => ({
