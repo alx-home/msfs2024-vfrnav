@@ -71,6 +71,7 @@ export const Draggable = ({ children, vertical, onOrdersChange, className, activ
    const onDragEnd = () => {
       dragRef.current?.blur()
       dragRef.current = undefined;
+      setBoundings(undefined);
    };
 
    const onDrag = (mousePos: number) => {
@@ -103,7 +104,11 @@ export const Draggable = ({ children, vertical, onOrdersChange, className, activ
       }
    };
 
-   return <div ref={ref} className={className ?? 'flex flex-col'}>
+   return <div ref={ref} className={className ?? 'flex flex-col'}
+      onDragOver={e => {
+         e.preventDefault();
+         onDrag(vertical ? e.pageY : e.pageX);
+      }}>
       <AnimatedOrder orders={orders} itemsRef={itemsRef} vertical={vertical}>
          {
             childs.map((child, index) => {
@@ -113,9 +118,8 @@ export const Draggable = ({ children, vertical, onOrdersChange, className, activ
                   tabIndex={-1}
                   ref={el => { itemsRef.current[index] = el; }}
                   onDragStart={e => onDragStart(vertical ? e.pageY : e.pageX)}
-                  onDragOver={e => onDrag(vertical ? e.pageY : e.pageX)}
                   onDragEnd={onDragEnd}
-               // {...((itemsRef.current[index] === dragRef.current) ? { style: { opacity: 0 } } : {})}
+                  {...((itemsRef.current[index] === dragRef.current) ? { style: { opacity: 0 } } : {})}
                >
                   {child}
                </div>;
