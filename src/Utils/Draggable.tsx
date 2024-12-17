@@ -119,7 +119,7 @@ export const Draggable = ({ children, vertical, onOrdersChange, className, activ
                   ref={el => { itemsRef.current[index] = el; }}
                   onDragStart={e => onDragStart(vertical ? e.pageY : e.pageX)}
                   onDragEnd={onDragEnd}
-                  {...((itemsRef.current[index] === dragRef.current) ? { style: { opacity: 0 } } : {})}
+                  {...((itemsRef.current[index] === dragRef.current && dragRef.current !== undefined) ? { style: { opacity: 0 } } : {})}
                >
                   {child}
                </div>;
