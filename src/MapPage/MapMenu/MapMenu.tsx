@@ -6,6 +6,7 @@ import { Nav, NavItem } from './Menus/Nav';
 
 import { MapContext } from '../MapPage';
 import useMouseDrag from '@/Events/MouseDrag';
+import { Scroll } from '@/Utils/Scroll';
 
 export enum Menu { layers, nav };
 
@@ -125,7 +126,10 @@ export const MapMenu = ({ open, setOpen, menu, layers, onLayerChange, mapContext
          onKeyDown={handleKey}
          className='select-none transition-std transition-colors w-2 bg-slate-900 hocus:bg-msfs' />
 
-      <div style={{ width: width, ...(width > 0 ? {} : { display: 'none' }) }} className={'overflow-hidden shrink-0 border-l border-gray-700 pointer-events-auto flex h-full w-full flex-col gap-y-2.5 overflow-y-scroll bg-gray-800 text-center text-white' + (width > 0 ? ' p-3' : '')}>
+      <Scroll className={'overflow-hidden shrink-0 border-l border-gray-700 pointer-events-auto flex'
+         + ' flex-col gap-y-2.5 bg-gray-800 text-center text-white'
+         + (width > 0 ? ' p-3' : '')}
+         style={{ width: width, ...(width > 0 ? {} : { display: 'none' }) }}>
          {menu === Menu.layers ?
             <Layers layers={layers} onLayerChange={onLayerChange} /> :
             <Nav mapContext={mapContext}>
@@ -133,6 +137,6 @@ export const MapMenu = ({ open, setOpen, menu, layers, onLayerChange, mapContext
                   <NavItem key={item.id} active={item.active} name={item.name} shortName={item.shortName} feature={item.feature} mapContext={mapContext} />
                )}
             </Nav>}
-      </div>
+      </Scroll>
    </>
 };

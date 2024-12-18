@@ -5,13 +5,11 @@ export default function useMouseDrag(dragging: boolean) {
 
    useEffect(() => {
       const handleMouseMove = (e: MouseEvent) => {
-         if (dragging) {
-            setMousePosition({ x: e.clientX, y: e.clientY });
-         }
+         setMousePosition({ x: e.clientX, y: e.clientY });
       };
       document.addEventListener('mousemove', handleMouseMove);
       return () => document.removeEventListener('mousemove', handleMouseMove);
    }, [dragging]);
 
-   return mousePosition;
+   return dragging ? mousePosition : undefined;
 }
