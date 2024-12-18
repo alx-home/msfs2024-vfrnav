@@ -37,11 +37,12 @@ export const Draggable = ({ children, vertical, onOrdersChange, className, activ
       const boundings: Box[] = [];
       for (let order = 0; order < itemsRef.current.length; ++order) {
          const elem = getRef(order);
+         const client = elem!.getBoundingClientRect();
 
          if (vertical) {
-            boundings[order] = new Box(elem!.offsetTop + window.scrollY, elem!.offsetTop + elem!.offsetHeight + window.scrollY);
+            boundings[order] = new Box(client.top, client.top + client.height);
          } else {
-            boundings[order] = new Box(elem!.offsetLeft + window.scrollX, elem!.offsetLeft + elem!.offsetWidth + window.scrollX);
+            boundings[order] = new Box(client.left, client.left + client.width);
          }
       }
 
@@ -58,7 +59,7 @@ export const Draggable = ({ children, vertical, onOrdersChange, className, activ
 
             if (vertical) {
                console.log(ref.current?.scrollTop)
-               if (bounding.Collapse(mousePos + (vertical ? window.scrollY + (ref.current?.scrollTop ?? 0) : window.scrollX + (ref.current?.scrollLeft ?? 0)))) {
+               if (bounding.Collapse(mousePos)) {
                   dragRef.current = getRef(order);
                   dragRef.current?.focus()
                   break;
@@ -76,7 +77,7 @@ export const Draggable = ({ children, vertical, onOrdersChange, className, activ
 
    const onDrag = (mousePos: number) => {
       if (dragRef.current && boundings) {
-         const newOrder = boundings.findIndex((box) => box.Collapse(mousePos + (vertical ? window.scrollY + (ref.current?.scrollTop ?? 0) : window.scrollX + (ref.current?.scrollLeft ?? 0))));
+         const newOrder = boundings.findIndex((box) => box.Collapse(mousePos));
 
          if (newOrder < 0) {
             return;
