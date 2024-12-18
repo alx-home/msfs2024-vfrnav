@@ -4,6 +4,7 @@ import { MapContext } from "@/MapPage/MapPage";
 import { Collection, Map, View } from "ol";
 import BaseLayer from "ol/layer/Base";
 import { fromLonLat } from "ol/proj";
+import { defaults } from "ol/interaction/defaults";
 import { Children, isValidElement, PropsWithChildren, useEffect, useRef, useState } from "react";
 
 export const OlMap = ({ children, id, className, mapContext }: PropsWithChildren<{ id: string, className: string, mapContext: MapContext }>) => {
@@ -45,6 +46,7 @@ export const OlMap = ({ children, id, className, mapContext }: PropsWithChildren
             center: center,
             zoom: zoom,
          }),
+         interactions: defaults({ doubleClickZoom: false })
       });
 
       setMap(initialMap);
