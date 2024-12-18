@@ -4,7 +4,7 @@ import { useRef } from "react";
 export const Menu = ({ setPage, pages, activePage }: { pages: (Page | Space)[], setPage: (page: string) => void, activePage: string }) => {
    const refs = useRef<(HTMLButtonElement | null)[]>([]);
 
-   return <div className={'px-3 w-[60px] bg-menu flex h-full flex-col gap-y-3 overflow-hidden py-3 max-sm:pt-0'}>
+   return <div className={'px-3 w-[60px] bg-menu flex h-full flex-col gap-y-3 overflow-hidden py-3'}>
       {pages.map((_page, index) => {
          if (_page.type === 'page') {
             const page = (_page as Page);

@@ -137,13 +137,14 @@ export const NavItem = ({ name, shortName, feature, active, mapContext, setDragg
    </div>;
 };
 
-const Add = ({ name, image, onClick, enabled }: PropsWithChildren<{
+const Add = ({ name, image, onClick, disabled, active }: PropsWithChildren<{
    name: string,
    image: string | StaticImport,
    onClick: MouseEventHandler<HTMLButtonElement>,
-   enabled?: boolean
+   disabled?: boolean,
+   active?: boolean
 }>) => {
-   return <Button onClick={onClick} active={enabled ?? true} className='px-2 min-h-8 pt-1 flex flex-row grow @container'>
+   return <Button onClick={onClick} active={active ?? true} disabled={disabled ?? false} className='px-2 min-h-8 pt-1 flex flex-row grow @container'>
       <div className='hidden @[47px]:flex'>{name}</div>
       <div className='flex grow justify-center @[47px]:hidden'><Image src={image} alt={name} className='invert' /></div>
    </Button>;
@@ -198,9 +199,9 @@ export const Nav = ({ children, mapContext }: PropsWithChildren<{
          </Draggable>
          <div className='flex gap-x-4 mt-2'>
             <Add name='Add' image={newFileImg} onClick={() => { mapContext.addNav() }} />
-            <Add name='Import' image={importImg} enabled={false} onClick={() => { }} />
+            <Add name='Import' image={importImg} disabled={true} onClick={() => { }} />
          </div>
-         <Add name='Export' image={exportImg} enabled={false} onClick={() => { }} />
+         <Add name='Export' image={exportImg} disabled={true} onClick={() => { }} />
       </menu>
    </>
 };
