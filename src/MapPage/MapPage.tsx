@@ -137,7 +137,7 @@ const OverlayItem = ({ menu, setMenu, setOpen, image, alt, currentMenu }: {
          setMenu(currentMenu);
       }}
       onMouseUp={e => e.currentTarget.blur()}>
-      <Image src={image} alt={alt} />
+      <Image priority={true} src={image} alt={alt} />
    </button>;
 };
 

@@ -42,7 +42,7 @@ const Item = ({ children, name, category, className, onReset }: PropsWithChildre
       </div>
       <div className="w-8">
          <div className="p-1">
-            <Image className="invert hover:filter-msfs cursor-pointer" src={undoImg} alt='undo'
+            <Image priority={true} className="invert hover:filter-msfs cursor-pointer" src={undoImg} alt='undo'
                onClick={() => { setReset(true) }} />
          </div>
       </div>

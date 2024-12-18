@@ -42,7 +42,7 @@ const Edit = ({ onClick, image, alt, background, hidden }: {
    hidden: boolean
 }) => {
    return <button className={'flex w-11 h-11 hover:brightness-125 focus:border-2 focus:border-with ' + ' ' + background + (hidden ? ' overflow-hidden hidden' : '')} onClick={onClick}>
-      <Image className='w-8 h-8 grow mt-auto mb-auto justify-center' src={image} alt={alt} />
+      <Image priority={true} className='w-8 h-8 grow mt-auto mb-auto justify-center' src={image} alt={alt} />
    </button>;
 };
 
@@ -146,7 +146,9 @@ const Add = ({ name, image, onClick, disabled, active }: PropsWithChildren<{
 }>) => {
    return <Button onClick={onClick} active={active ?? true} disabled={disabled ?? false} className='px-2 min-h-8 pt-1 flex flex-row grow @container'>
       <div className='hidden @[47px]:flex'>{name}</div>
-      <div className='flex grow justify-center @[47px]:hidden'><Image src={image} alt={name} className='invert' /></div>
+      <div className='flex grow justify-center @[47px]:hidden'>
+         <Image priority={true} src={image} alt={name} className='invert' />
+      </div>
    </Button>;
 };
 

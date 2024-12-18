@@ -31,7 +31,7 @@ const LayerComp = ({ src, alt, onActiveChange, active }:
       ref={ref}
       onClick={() => setCurrentActive(active => !active)}
       onMouseUp={() => ref.current?.blur()}>
-      <Image width={200} height={200} src={src} alt={alt}
+      <Image priority={true} width={200} height={200} src={src} alt={alt}
          className={'block ml-auto mr-auto group-hocus:brightness-75 group-hocus:contrast-150 '
             + (transition ? ' transition-[width]' : '')
             + ' w-28 @lg:border-l-2'

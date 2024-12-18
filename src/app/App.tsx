@@ -48,24 +48,24 @@ export const App = () => {
   const pages: (Page | Space)[] = [
     new Page({
       name: "map",
-      icon: <Image src={mapImg} alt='map' />,
+      icon: <Image priority={true} src={mapImg} alt='map' />,
       elem: <MapPage key="map" active={page === "map"} />
     }),
     new Page({
       name: "navlog",
-      icon: <Image src={navlogImg} alt='nav log' />,
+      icon: <Image priority={true} src={navlogImg} alt='nav log' />,
       elem: <div key="nvlog" />,
       disabled: true
     }),
     new Page({
       name: "settings",
-      icon: <Image src={settingsImg} alt='settings' />,
+      icon: <Image priority={true} src={settingsImg} alt='settings' />,
       elem: <SettingsPage key="settings" active={page === "settings"} />
     }),
     new Space(1),
     new Page({
       name: "credits",
-      icon: <Image src={creditsImg} alt='credits' />,
+      icon: <Image priority={true} src={creditsImg} alt='credits' />,
       elem: <CreditsPage key="credits" active={page === "credits"} />
     })
   ];
