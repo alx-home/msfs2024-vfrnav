@@ -42,9 +42,7 @@ export class MapContext {
       public readonly flash: boolean,
       public readonly setFlash: Dispatch<SetStateAction<boolean>>,
       public readonly flashKey: number,
-      public readonly setFlashKey: Dispatch<SetStateAction<number>>,
-      public readonly aircraftSpeed: number,
-      public readonly setAircraftSpeed: Dispatch<SetStateAction<number>>
+      public readonly setFlashKey: Dispatch<SetStateAction<number>>
    ) { }
 
    public triggerFlash(value?: boolean) {
@@ -118,9 +116,8 @@ export class MapContext {
       const [counter, setCounter] = useState(0);
       const [flash, setFlash] = useState(false);
       const [flashKey, setFlashKey] = useState(0);
-      const [aircraftSpeed, setAircraftSpeed] = useState(95);
 
-      const context = useMemo<MapContext>(() => new MapContext(addNav, cancel, addFeature, removeFeature, navData, setNavData, counter, setCounter, flash, setFlash, flashKey, setFlashKey, aircraftSpeed, setAircraftSpeed), [navData, counter, flash, flashKey, aircraftSpeed]);
+      const context = useMemo<MapContext>(() => new MapContext(addNav, cancel, addFeature, removeFeature, navData, setNavData, counter, setCounter, flash, setFlash, flashKey, setFlashKey), [navData, counter, flash, flashKey]);
 
       return context;
    };

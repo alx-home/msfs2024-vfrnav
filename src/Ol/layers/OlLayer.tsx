@@ -36,7 +36,6 @@ export const OlLayer = ({ opacity, source, map, order, active, maxZoom, minZoom 
    }, [order]);
 
    useEffect(() => {
-      console.log(active)
       if (active !== undefined) {
          layerRef.current?.setVisible(active);
          if (order) {

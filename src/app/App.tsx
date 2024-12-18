@@ -14,6 +14,8 @@ import navlogImg from '@/../public/navlog.svg';
 import settingsImg from '@/../public/settings.svg';
 import creditsImg from '@/../public/credits.svg';
 import { CreditsPage } from '@/CreditsPage/CreditsPage';
+import { SettingsPage } from '@/SettingsPage/SettingsPage';
+import SettingsContextProvider from '@/Settings';
 
 export class Page {
   public readonly type: string = 'page';
@@ -58,8 +60,7 @@ export const App = () => {
     new Page({
       name: "settings",
       icon: <Image src={settingsImg} alt='settings' />,
-      elem: <div key="settings" />,
-      disabled: true
+      elem: <SettingsPage key="settings" active={page === "settings"} />
     }),
     new Space(1),
     new Page({
@@ -71,10 +72,12 @@ export const App = () => {
 
   return (
     <MouseContextProvider>
-      <div key='home' className='Home'>
-        <Menu pages={pages} setPage={page => setPage(page)} activePage={page} />
-        {pages.map(elem => elem.elem)}
-      </div>
+      <SettingsContextProvider>
+        <div key='home' className='Home'>
+          <Menu pages={pages} setPage={page => setPage(page)} activePage={page} />
+          {pages.map(elem => elem.elem)}
+        </div>
+      </SettingsContextProvider>
     </MouseContextProvider>
   );
 };

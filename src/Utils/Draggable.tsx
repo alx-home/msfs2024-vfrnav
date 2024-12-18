@@ -58,7 +58,6 @@ export const Draggable = ({ children, vertical, onOrdersChange, className, activ
             const bounding = boundings[order];
 
             if (vertical) {
-               console.log(ref.current?.scrollTop)
                if (bounding.Collapse(mousePos)) {
                   dragRef.current = getRef(order);
                   dragRef.current?.focus()
