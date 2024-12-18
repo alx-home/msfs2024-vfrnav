@@ -45,6 +45,6 @@ export const OlWMTSLayer = ({
       tileGrid: new WMTSTileGrid(tileGrid),
       style: style ?? 'normal',
       wrapX: wrapX ?? true,
-   }), []);
+   }), [format, layer, matrixSet, projection, style, tileGrid, url, version, wrapX]);
    return <OlLayer source={source} map={map} opacity={opacity} order={order} active={active} />;
 };

@@ -184,8 +184,6 @@ export const OlRouteLayer = ({
          source: source
       });
 
-      layer_.setZIndex(zIndex);
-
       if (layer.current) {
          map?.removeLayer(layer.current);
       }
@@ -222,7 +220,13 @@ export const OlRouteLayer = ({
    }, [map]);
 
    useEffect(() => {
-      layer.current?.setStyle(navRenderer);
+      layer.current?.setZIndex(zIndex);
+   }, [zIndex]);
+
+   useEffect(() => {
+      if (layer.current) {
+         layer.current.setStyle(navRenderer);
+      }
    }, [navRenderer, layer.current]);
 
    useEffect(() => {

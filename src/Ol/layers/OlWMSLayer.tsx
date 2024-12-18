@@ -19,6 +19,6 @@ export const OlWMSLayer = ({
          url: url,
          crossOrigin: crossOrigin ?? "anonymous"
       },
-   }), []);
+   }), [crossOrigin, url]);
    return <OlLayer source={source} map={map} opacity={opacity} order={order} active={active} />;
 };

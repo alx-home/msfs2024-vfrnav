@@ -1,7 +1,5 @@
 import useMouseRelease from '@/Events/MouseRelease';
-import { PropsWithChildren, MouseEventHandler, useRef, useEffect, useState, useContext, CSSProperties, useCallback } from 'react';
-import useMouseMove from '../Events/MouseMove';
-import { MouseContext } from '@/Events/MouseContext';
+import { PropsWithChildren, useRef, useEffect, useState, CSSProperties, useCallback } from 'react';
 import useMouseDrag from '@/Events/MouseDrag';
 
 export const Scroll = ({ children, className, style }: PropsWithChildren<{
@@ -24,7 +22,7 @@ export const Scroll = ({ children, className, style }: PropsWithChildren<{
          ref.current.scroll(ref.current.scrollLeft + (mousePosition.x - lastPos.x) * scroll.ratioX, ref.current.scrollTop + (mousePosition.y - lastPos.y) * scroll.ratioY);
          setLastPos(mousePosition);
       }
-   }, [mousePosition, lastPos, ref.current, setLastPos, scroll]);
+   }, [mousePosition, lastPos, setLastPos, scroll]);
 
    const updateScroll = useCallback((target: HTMLDivElement) => {
       setVisible(count => count + 1);
@@ -44,7 +42,7 @@ export const Scroll = ({ children, className, style }: PropsWithChildren<{
       if (ref.current) {
          updateScroll(ref.current);
       }
-   }, [ref.current, ref.current?.scrollWidth, ref.current?.scrollHeight, ref.current?.scrollTop, ref.current?.scrollLeft]);
+   }, [updateScroll, ref.current?.scrollWidth, ref.current?.scrollHeight, ref.current?.scrollTop, ref.current?.scrollLeft]);
 
    useEffect(() => {
       if (visible) {

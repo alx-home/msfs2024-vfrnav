@@ -26,7 +26,7 @@ const Item = ({ children, name, category, className, onReset }: PropsWithChildre
          onReset?.();
          setReset(false);
       }
-   }, [reset, setReset]);
+   }, [onReset, reset, setReset]);
 
    return <div className="group flex flex-row py-4 pl-6 hover:bg-menu gap-x-8 pr-4">
       <div className="flex flex-col grow basis-0">
@@ -49,7 +49,7 @@ const Item = ({ children, name, category, className, onReset }: PropsWithChildre
    </div>;
 }
 
-const Error = ({ children, type }: PropsWithChildren<{
+const Error = ({ children }: PropsWithChildren<{
    type: string
 }>) => {
    return children;

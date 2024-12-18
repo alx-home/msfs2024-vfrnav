@@ -15,7 +15,7 @@ export const CheckBox = ({ className, active, children, _default, _onChange, res
    const elemRef = useRef<HTMLInputElement | null>(null);
    const mouseLeave = useMouseRelease();
 
-   useEffect(() => _onChange?.(checked), [checked, setChecked]);
+   useEffect(() => _onChange?.(checked), [_onChange, checked, setChecked]);
    useEffect(() => {
       if (reset) {
          setChecked(_default ?? false);

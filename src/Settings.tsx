@@ -11,9 +11,9 @@ export const SettingsContext = createContext<{
    speed: 95,
    adjustHeading: true,
    adjustTime: true,
-   setSpeed: (speed) => { },
-   setAdjustHeading: (enable) => { },
-   setAdjustTime: (enable) => { }
+   setSpeed: () => { },
+   setAdjustHeading: () => { },
+   setAdjustTime: () => { }
 });
 
 const SettingsContextProvider = ({ children }: PropsWithChildren) => {

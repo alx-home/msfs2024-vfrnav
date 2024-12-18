@@ -12,7 +12,7 @@ export default function useMouseMove(active?: boolean) {
 
       document.addEventListener('mousemove', handleMouseMove);
       return () => document.removeEventListener('mousemove', handleMouseMove);
-   }, []);
+   }, [active]);
 
    return (active ?? true) ? mousePosition : undefined;
 }

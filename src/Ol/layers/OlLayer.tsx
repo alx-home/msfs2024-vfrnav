@@ -27,7 +27,7 @@ export const OlLayer = ({ opacity, source, map, order, active, maxZoom, minZoom 
       map?.addLayer(tileLayer);
 
       return () => { map?.removeLayer(tileLayer); };
-   }, [map, opacity]);
+   }, [map, opacity, active, maxZoom, minZoom, source]);
 
    useEffect(() => {
       if (order !== undefined) {
@@ -42,7 +42,7 @@ export const OlLayer = ({ opacity, source, map, order, active, maxZoom, minZoom 
             layerRef.current?.setZIndex(order);
          }
       }
-   }, [active]);
+   }, [active, order]);
 
    return <></>;
 };
