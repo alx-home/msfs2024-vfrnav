@@ -30,13 +30,15 @@ export const CheckBox = ({ className, active, children, _default, _onChange, res
 
    return <div className={"relative flex flex-row "
       + (className ?? "")}>
-      <Image className={'absolute transition transition-std p-0 m-0 left-[-7px] top-[-6px] w-14 h-12 invert cursor-pointer' + (checked ? '' : ' opacity-0')} src={checkImage} alt='checked' />
-      <input type='checkbox' className={'peer absolute cursor-pointer opacity-0 h-8 w-8 p-0 m-0'} checked={checked}
-         onChange={() => { setChecked(checked => !checked) }}
-         ref={elemRef}
-         disabled={!active} />
-      <div className={"flex h-8 w-8 bg-gray-700 p-1 shadow-md text-left rounded-sm border-2 border-gray-900"
-         + " mr-4 border-2 peer-hocus:bg-gray-800 peer-hocus:border-msfs cursor-pointer"}>
+      <div className="relative flex my-auto">
+         <Image className={'absolute transition transition-std p-0 m-0 left-[-7px] top-[-6px] w-14 h-12 invert pointer-events-none'
+            + (checked ? '' : ' opacity-0')} src={checkImage} alt='checked' />
+         <input type='checkbox' className={'peer absolute opacity-0 h-8 w-8 p-0 m-0 cursor-pointer'} checked={checked}
+            onChange={() => { setChecked(checked => !checked) }}
+            ref={elemRef}
+            disabled={!active} />
+         <div className={"flex h-8 w-8 bg-gray-700 p-1 shadow-md text-left rounded-sm border-2 border-gray-900 mr-4"
+            + " peer-hocus:bg-gray-800 peer-hocus:border-msfs cursor-pointer"} />
       </div>
       {children}
    </div>;
