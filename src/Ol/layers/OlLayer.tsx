@@ -4,13 +4,10 @@ import { TileImage } from "ol/source";
 import { useEffect, useRef } from "react";
 
 export class OlLayerProp {
-   constructor(public order?: number, public active?: boolean, public map?: Map, public maxZoom?: number, public minZoom?: number) { }
+   constructor(public map?: Map, public order?: number, public active?: boolean, public maxZoom?: number, public minZoom?: number) { }
 }
 
-export const OlLayer = ({ opacity, source, map, order, active, maxZoom, minZoom }: OlLayerProp & {
-   opacity?: number,
-   source: TileImage
-}) => {
+const useLayer = (source: TileImage, map?: Map, opacity?: number, maxZoom?: number, minZoom?: number) => {
    const layerRef = useRef<TileLayer>();
 
    useEffect(() => {
@@ -22,27 +19,38 @@ export const OlLayer = ({ opacity, source, map, order, active, maxZoom, minZoom 
       });
 
       layerRef.current = tileLayer;
-      layerRef.current?.setVisible(active ?? false);
-
       map?.addLayer(tileLayer);
 
       return () => { map?.removeLayer(tileLayer); };
-   }, [map, opacity, active, maxZoom, minZoom, source]);
+   }, [map, opacity, maxZoom, minZoom, source]);
+
+   return layerRef.current;
+};
+
+export const OlLayer = ({ opacity, source, map, order, active, maxZoom, minZoom }: OlLayerProp & {
+   opacity?: number,
+   source: TileImage
+}) => {
+   const layer = useLayer(source, map, opacity, maxZoom, minZoom);
+
+   useEffect(() => {
+      layer?.setVisible(active ?? false);
+   }, [active, layer]);
 
    useEffect(() => {
       if (order !== undefined) {
-         layerRef.current?.setZIndex(order);
+         layer?.setZIndex(order);
       }
-   }, [order]);
+   }, [order, layer]);
 
    useEffect(() => {
       if (active !== undefined) {
-         layerRef.current?.setVisible(active);
+         layer?.setVisible(active);
          if (order) {
-            layerRef.current?.setZIndex(order);
+            layer?.setZIndex(order);
          }
       }
-   }, [active, order]);
+   }, [active, order, layer]);
 
    return <></>;
 };

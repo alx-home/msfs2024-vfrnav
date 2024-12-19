@@ -134,7 +134,7 @@ export const MapMenu = ({ open, setOpen, menu, layers, onLayerChange, mapContext
             <Layers layers={layers} onLayerChange={onLayerChange} /> :
             <Nav mapContext={mapContext}>
                {mapContext.navData.map((item) =>
-                  <NavItem key={item.id} active={item.active} name={item.name} shortName={item.shortName} feature={item.feature} mapContext={mapContext} />
+                  <NavItem key={item.id} active={item.active} name={item.name} shortName={item.shortName} mapContext={mapContext} />
                )}
             </Nav>}
       </Scroll>

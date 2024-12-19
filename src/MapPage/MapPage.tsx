@@ -33,8 +33,6 @@ export class MapContext {
    constructor(
       public readonly addNavRef: MutableRefObject<(() => void) | undefined>,
       public readonly cancelRef: MutableRefObject<(() => void) | undefined>,
-      public readonly addFeatureRef: MutableRefObject<((feature: Feature) => void) | undefined>,
-      public readonly removeFeatureRef: MutableRefObject<((feature: Feature) => void) | undefined>,
       public readonly navData: NavData[],
       public readonly setNavData: Dispatch<SetStateAction<NavData[]>>,
       public readonly counter: number,
@@ -59,7 +57,7 @@ export class MapContext {
    public reorderNav(orders: number[]) {
       this.setNavData(data => {
          return orders.map((order, index) => ({ ...data[index], order: order }))
-      })
+      });
    }
 
    public cancel() {
@@ -99,25 +97,16 @@ export class MapContext {
       });
    }
 
-   public addFeature(feature: Feature) {
-      this.addFeatureRef?.current?.(feature);
-   }
-
-   public removeFeature(feature: Feature) {
-      this.removeFeatureRef?.current?.(feature);
-   }
-
    static readonly use = () => {
       const addNav = useRef<() => void>();
       const cancel = useRef<() => void>();
-      const addFeature = useRef<(feature: Feature) => void>();
-      const removeFeature = useRef<(feature: Feature) => void>();
       const [navData, setNavData] = useState<NavData[]>([]);
       const [counter, setCounter] = useState(0);
       const [flash, setFlash] = useState(false);
       const [flashKey, setFlashKey] = useState(0);
 
-      const context = useMemo<MapContext>(() => new MapContext(addNav, cancel, addFeature, removeFeature, navData, setNavData, counter, setCounter, flash, setFlash, flashKey, setFlashKey), [navData, counter, flash, flashKey]);
+      const context = useMemo<MapContext>(() => new MapContext(addNav, cancel, navData, setNavData,
+         counter, setCounter, flash, setFlash, flashKey, setFlashKey), [navData, counter, flash, flashKey]);
 
       return context;
    };

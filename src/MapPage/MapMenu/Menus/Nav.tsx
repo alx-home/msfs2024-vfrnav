@@ -77,26 +77,16 @@ const Input = ({ mapContext, editMode, setEditMode, name }: {
    />;
 };
 
-export const NavItem = ({ name, shortName, feature, active, mapContext, setDraggable }: {
+export const NavItem = ({ name, shortName, active, mapContext, setDraggable }: {
    active: boolean,
    name: string,
    shortName: string,
-   feature: Feature,
    mapContext: MapContext,
    setDraggable?: Dispatch<SetStateAction<boolean>>
 }) => {
    const [editMode, setEditMode] = useState(false);
    const [hover, setHover] = useState(false);
    const [focused, setFocused] = useState(false);
-
-   useEffect(() => {
-      if (active) {
-         mapContext.addFeature(feature);
-      } else {
-         mapContext.removeFeature(feature);
-      }
-   }, [active, feature, mapContext]);
-
 
    useEffect(() => {
       return () => setDraggable?.(true);
@@ -132,7 +122,7 @@ export const NavItem = ({ name, shortName, feature, active, mapContext, setDragg
          onBlur={() => setFocused(false)}
       >
          <Edit onClick={() => setEditMode(true)} image={editImg} alt='edit' background='bg-msfs' hidden={!(hover || focused)} />
-         <Edit onClick={() => { mapContext.removeNav(name); mapContext.removeFeature(feature); }} image={deleteImg} alt='delete' background='bg-red-600' hidden={!(hover || focused)} />
+         <Edit onClick={() => mapContext.removeNav(name)} image={deleteImg} alt='delete' background='bg-red-600' hidden={!(hover || focused)} />
       </div>
    </div>;
 };
