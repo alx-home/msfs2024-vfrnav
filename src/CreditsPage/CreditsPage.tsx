@@ -1,3 +1,4 @@
+import { Scroll } from "@/Utils/Scroll";
 import { PropsWithChildren, useEffect, useState } from "react";
 
 const Section = ({ children, title }: PropsWithChildren<{ title: string }>) => {
@@ -20,37 +21,39 @@ export const CreditsPage = ({ active }: {
       }
    }, [active]);
 
-   return <div className="flex grow justify-center m-12 p-2" style={active ? {} : { display: 'none' }}>
-      <div className={"transition transition-std max-w-2xl m-auto bg-gray-700 shadow-md flex text-left rounded-sm border-2 border-gray-900 flex-col hocus:border-msfs"
+   return <div className="flex grow p-12 align-middle justify-center max-h-full " style={active ? {} : { display: 'none' }}>
+      <div className={"flex flex-col m-auto max-h-full transition transition-std shadow-md rounded-sm border-2 bg-gray-700 border-gray-900 hocus:border-msfs"
          + opacity
       }>
-         <Section title='OpenLayer'>
-            <li>
-               © <a href="https://github.com/openlayers/openlayers/blob/main/LICENSE.md" target="_blank">openlayers</a>.
-            </li>
-         </Section>
-         <Section title='OpenLayer Layers'>
-            <li>
-               © <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors.
-            </li>
-            <li>
-               © 2024 Microsoft Corporation.
-            </li>
-            <li>
-               Microsoft <a className="ol-attribution-bing-tos" href="https://www.microsoft.com/maps/product/terms.html" target="_blank">Terms of Use</a>.
-            </li>
-            <li>
-               Earthstar Geographics  SIO.
-            </li>
-            <li>
-               © 2024 TomTom.
-            </li>
-         </Section>
-         <Section title='MSFS2024 VFRNav'>
-            <li>
-               © <a href="https://github.com/alx-home/msfs2024-vfrnav/blob/master/LICENSE" target="_blank">MSFS2024 VFRNav&apos;</a>.
-            </li>
-         </Section>
+         <Scroll>
+            <Section title='OpenLayer'>
+               <li>
+                  © <a href="https://github.com/openlayers/openlayers/blob/main/LICENSE.md" target="_blank">openlayers</a>.
+               </li>
+            </Section>
+            <Section title='OpenLayer Layers'>
+               <li>
+                  © <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors.
+               </li>
+               <li>
+                  © 2024 Microsoft Corporation.
+               </li>
+               <li>
+                  Microsoft <a className="ol-attribution-bing-tos" href="https://www.microsoft.com/maps/product/terms.html" target="_blank">Terms of Use</a>.
+               </li>
+               <li>
+                  Earthstar Geographics  SIO.
+               </li>
+               <li>
+                  © 2024 TomTom.
+               </li>
+            </Section>
+            <Section title='MSFS2024 VFRNav'>
+               <li>
+                  © <a href="https://github.com/alx-home/msfs2024-vfrnav/blob/master/LICENSE" target="_blank">MSFS2024 VFRNav&apos;</a>.
+               </li>
+            </Section>
+         </Scroll>
       </div>
    </div >;
 }
