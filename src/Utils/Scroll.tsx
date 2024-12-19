@@ -22,7 +22,7 @@ export const Scroll = ({ children, className, style }: PropsWithChildren<{
             setVisible(count => count === visible ? 0 : count);
          }, 1000);
       }
-   }, [mouseUp]);
+   }, [mouseUp, visible]);
 
    useEffect(() => {
       if (mousePosition && lastPos && ref.current) {
@@ -51,7 +51,7 @@ export const Scroll = ({ children, className, style }: PropsWithChildren<{
             setVisible(count => count === visible && lastPos === undefined ? 0 : count);
          }, 1000);
       }
-   }, [visible]);
+   }, [visible, lastPos]);
 
    useEffect(() => {
       if (ref.current) {
