@@ -263,7 +263,7 @@ export const MapPage = ({ active }: {
             zIndex={layers.length}
             mapContext={mapContext}
             order={layers.length}
-            onDrawEnd={(feature: Feature, layer: VectorLayer) => {
+            onAddFeature={(feature: Feature, layer: VectorLayer) => {
                mapContext.setNavData(items => {
                   const { counter } = mapContext;
                   return [...items, { id: counter, order: items.length, active: active, name: `New Nav ${counter}`, shortName: `${counter}`, feature: feature, layer: layer }];

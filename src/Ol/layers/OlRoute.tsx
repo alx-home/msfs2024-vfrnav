@@ -21,10 +21,14 @@ import { MapContext } from "@/MapPage/MapPage";
 import { SettingsContext } from "@/Settings";
 
 const useMap = (map?: Map) => {
+   const [, setNextId] = useState(1);
    const sourceRef = useRef<VectorSource<Feature<Geometry>>>();
    const modifyRef = useRef<Modify>();
    const snapRef = useRef<Snap>();
    const layerRef = useRef<VectorLayer>();
+   const [modified, setModified] = useState<Feature[]>();
+   const [newFeatures, setNewFeatures] = useState<Feature[]>();
+
    const removeRefs = useCallback(() => {
       if (layerRef.current) {
          map?.removeLayer(layerRef.current);
@@ -51,6 +55,27 @@ const useMap = (map?: Map) => {
          features: features
       });
       sourceRef.current = source;
+      source.on('addfeature', e => {
+         if (e.feature && e.feature.getId() === undefined) {
+            setNextId(id => {
+               e.feature!.setId(id);
+
+               setNewFeatures(newFeatures => {
+                  const result = ([...(newFeatures ?? [])]);
+                  const index = result.findIndex(elem => elem.getId() === e.feature!.getId());
+
+                  if (index === -1) {
+                     result[result.length] = e.feature!;
+                  } else {
+                     result[index] = e.feature!;
+                  }
+
+                  return result;
+               });
+               return id + 1;
+            });
+         }
+      });
 
       const layer_ = new VectorLayer({
          source: source
@@ -65,6 +90,23 @@ const useMap = (map?: Map) => {
       });
       const snap = new Snap({ source: source });
 
+      modify.on('modifyend', e => {
+         setModified(features => {
+            const newFeatures = [...(features ?? [])];
+            e.features.forEach(feature => {
+               const index = newFeatures.findIndex((elem) => elem.getId() === feature.getId());
+
+               if (index !== -1) {
+                  newFeatures[index] = feature;
+               } else {
+                  newFeatures[newFeatures.length] = feature;
+               }
+            });
+
+            return newFeatures;
+         });
+      });
+
       modifyRef.current = modify;
       snapRef.current = snap;
 
@@ -74,20 +116,32 @@ const useMap = (map?: Map) => {
       return () => {
          removeRefs();
       };
-   }, [map, removeRefs]);
+   }, [map, removeRefs, setNewFeatures, setNextId]);
+
+   useEffect(() => {
+      if (modified) {
+         setModified(undefined);
+      }
+   }, [modified]);
+
+   useEffect(() => {
+      if (newFeatures) {
+         setNewFeatures(undefined);
+      }
+   }, [newFeatures, setNewFeatures]);
 
    return {
       source: sourceRef.current,
       modify: modifyRef.current,
       snap: snapRef.current,
-      layer: layerRef.current
+      layer: layerRef.current,
+      modified: modified,
+      newFeatures: newFeatures
    };
 };
 
-const useDraw = (mapContext: MapContext, onDrawEnd: (feature: Feature, layer: VectorLayer) => void, layer?: VectorLayer, map?: Map, source?: VectorSource<Feature<Geometry>>) => {
+const useDraw = (mapContext: MapContext, layer?: VectorLayer, map?: Map, source?: VectorSource<Feature<Geometry>>) => {
    const drawRef = useRef<Draw>();
-   const [newFeatures, setNewFeatures] = useState<Feature[]>();
-
    useEffect(() => {
       mapContext.addNavRef.current = () => {
          if (drawRef.current) {
@@ -103,19 +157,11 @@ const useDraw = (mapContext: MapContext, onDrawEnd: (feature: Feature, layer: Ve
          map?.addInteraction(drawRef.current);
          mapContext.triggerFlash();
 
-         draw.on('drawend', e => {
+         draw.on('drawend', () => {
             map?.removeInteraction(draw);
-            setNewFeatures(features => ([...(features ?? []), e.feature]));
          });
       };
-   }, [map, mapContext, source, setNewFeatures]);
-
-   useEffect(() => {
-      if (newFeatures) {
-         newFeatures.forEach(feature => onDrawEnd(feature, layer!));
-         setNewFeatures(undefined);
-      }
-   }, [newFeatures, onDrawEnd, layer]);
+   }, [map, mapContext, source]);
 
    useEffect(() => () => {
       if (drawRef.current) {
@@ -124,18 +170,18 @@ const useDraw = (mapContext: MapContext, onDrawEnd: (feature: Feature, layer: Ve
       }
    }, [map]);
 
-   return drawRef.current;
+   return { draw: drawRef.current };
 }
 
 export const OlRouteLayer = ({
    map,
    mapContext,
-   onDrawEnd,
+   onAddFeature,
    order,
    zIndex
 }: {
    mapContext: MapContext,
-   onDrawEnd: (feature: Feature, layer: VectorLayer) => void,
+   onAddFeature: (feature: Feature, layer: VectorLayer) => void,
    zIndex: number
 } & OlLayerProp) => {
    const redMarker = useRef<HTMLImageElement>();
@@ -143,8 +189,14 @@ export const OlRouteLayer = ({
    const greenMarker = useRef<HTMLImageElement>();
 
    const settings = useContext(SettingsContext);
-   const { source, layer } = useMap(map);
-   const draw = useDraw(mapContext, onDrawEnd, layer, map, source);
+   const { source, layer, modified, newFeatures } = useMap(map);
+   const { draw } = useDraw(mapContext, layer, map, source);
+
+   useEffect(() => {
+      newFeatures?.forEach(feature => {
+         onAddFeature(feature, layer!)
+      });
+   }, [newFeatures, onAddFeature, layer]);
 
    const navRenderer = useMemo(() => (feature: FeatureLike) => {
       const geom = feature.getGeometry();
@@ -291,8 +343,22 @@ export const OlRouteLayer = ({
    }, [map, mapContext.cancelRef, draw]);
 
    useEffect(() => {
+      if (modified) {
+         modified.forEach((feature) => {
+            const data = mapContext.navData.find(elem => elem.feature.getId() === feature.getId());
+            console.assert(data);
+            data!.feature = feature
+         });
+      }
+   }, [modified, mapContext.navData]);
+
+   useEffect(() => {
       if (source) {
-         const features = mapContext.navData.filter(data => data.active).toSorted((left, right) => left.order - right.order).map(data => data.feature.clone());
+         const features = mapContext.navData.filter(data => data.active).toSorted((left, right) => left.order - right.order).map(data => {
+            const feature = data.feature.clone();
+            feature.setId(data.feature.getId());
+            return feature;
+         });
          source.clear();
          source.addFeatures(features);
       }
