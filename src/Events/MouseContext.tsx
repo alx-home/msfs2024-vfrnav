@@ -1,5 +1,5 @@
 
-import React, { createContext, PropsWithChildren, useMemo, useState } from "react";
+import { createContext, PropsWithChildren, useMemo, useState } from "react";
 
 export const MouseContext = createContext<{
    cursorType: string,
