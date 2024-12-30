@@ -15,6 +15,7 @@ import { Draggable } from '@/Utils/Draggable';
 import { MapContext } from '@/MapPage/MapContext';
 
 export class NavData {
+   // eslint-disable-next-line no-unused-vars
    constructor(public id: number, public order: number, public name: string, public active: boolean, public shortName: string, public feature: Feature, public layer: VectorLayer) { }
 };
 
@@ -161,8 +162,7 @@ const Item = ({ children, className, setDraggable }: PropsWithChildren<{
    return <div className={className + ' gap-x-0'}>{child}</div>;
 };
 
-export const Nav = ({ children }: PropsWithChildren<{
-}>) => {
+export const Nav = ({ children }: PropsWithChildren<unknown>) => {
    const mapContext = useContext(MapContext)!;
    const key = mapContext.navData.reduce((prev, elem) => { return prev + ";" + elem.name; }, "");
    const [draggable, setDraggable] = useState(true);

@@ -64,6 +64,7 @@ export const Scroll = ({ children, className, style }: PropsWithChildren<{
          + (visible ? ' opacity-100' : '')
          + (scroll.displayY ? '' : ' hidden')
       }>
+         {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
          <div className={'transition grow bg-gray-700 group-hover:bg-msfs'
             + (visible ? ' bg-msfs' : '')} style={{ marginTop: scroll.y, height: scroll.height }}
             onMouseDown={e => {

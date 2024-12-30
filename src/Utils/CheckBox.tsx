@@ -7,7 +7,7 @@ export const CheckBox = ({ className, active, children, _default, _onChange, res
    className?: string,
    active: boolean,
    _default?: boolean,
-   _onChange?: (checked: boolean) => void,
+   _onChange?: (_checked: boolean) => void,
    reset?: boolean
 }>) => {
    const [checked, setChecked] = useState(_default ?? false);

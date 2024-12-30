@@ -3,7 +3,7 @@ import { createContext, PropsWithChildren, useMemo, useState } from "react";
 
 export const MouseContext = createContext<{
    cursorType: string,
-   cursorChangeHandler: (cursorType: string) => void
+   cursorChangeHandler: (_cursorType: string) => void
 }>({
    cursorType: "",
    cursorChangeHandler: () => { },

@@ -5,6 +5,7 @@ import { useContext, useEffect, useState } from "react";
 import { MapContext } from "@/MapPage/MapContext";
 
 export class OlLayerProp {
+   // eslint-disable-next-line no-unused-vars
    constructor(public order?: number, public active?: boolean, public maxZoom?: number, public minZoom?: number) { }
 }
 

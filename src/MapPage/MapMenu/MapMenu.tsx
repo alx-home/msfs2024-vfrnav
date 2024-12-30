@@ -8,6 +8,7 @@ import useMouseDrag from '@/Events/MouseDrag';
 import { Scroll } from '@/Utils/Scroll';
 import { MapContext } from '../MapContext';
 
+// eslint-disable-next-line no-unused-vars
 export enum Menu { layers, nav };
 
 export const MapMenu = ({ open, setOpen, menu, layers, onLayerChange }: {
@@ -110,6 +111,7 @@ export const MapMenu = ({ open, setOpen, menu, layers, onLayerChange }: {
    }, [resizing, cursorChangeHandler]);
 
    return <>
+      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions,jsx-a11y/no-noninteractive-tabindex */}
       <div ref={handleRef} role="separator" aria-orientation="vertical" tabIndex={0}
          onMouseEnter={() => {
             setCursorOut(false);

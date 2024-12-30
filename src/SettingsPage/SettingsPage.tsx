@@ -40,10 +40,10 @@ const Item = ({ children, name, category, className, onReset }: PropsWithChildre
          </div>
       </div>
       <div className="w-8">
-         <div className="p-1">
-            <img className="invert hover:filter-msfs cursor-pointer" src={undoImg} alt='undo'
-               onClick={() => { setReset(true) }} />
-         </div>
+         <button className="p-1"
+            onClick={() => { setReset(true) }} >
+            <img className="invert hover:filter-msfs cursor-pointer" src={undoImg} alt='undo' />
+         </button>
       </div>
    </div>;
 }
@@ -61,9 +61,9 @@ const InputItem = ({ children, name, category, _default, pattern, className, typ
    pattern?: string,
    className?: string,
    inputMode?: "email" | "search" | "tel" | "text" | "url" | "none" | "numeric" | "decimal",
-   validate?: (value: string) => boolean,
+   validate?: (_value: string) => boolean,
    type?: HTMLInputTypeAttribute,
-   onChange?: (value: string) => void
+   onChange?: (_value: string) => void
 }>) => {
    const childs = useMemo(() => Children.toArray(children), [children]);
    const [reset, setReset] = useState(false);
@@ -87,7 +87,7 @@ const CheckItem = ({ children, name, category, _default, _onChange }: PropsWithC
    name: string,
    category?: string,
    _default?: boolean,
-   _onChange?: (checked: boolean) => void
+   _onChange?: (_checked: boolean) => void
 }>) => {
    const [reset, setReset] = useState(false);
    const resetCallback = useMemo(() => () => setReset(true), [setReset]);

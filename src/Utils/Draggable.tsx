@@ -3,6 +3,7 @@ import { PropsWithChildren, Children, useState, useRef, isValidElement, useMemo 
 import { AnimatedOrder } from './AnimatedOrder';
 
 class Box {
+   // eslint-disable-next-line no-unused-vars
    constructor(public min: number, public max: number) {
    }
 
@@ -14,7 +15,7 @@ class Box {
 export const Draggable = ({ children, vertical, onOrdersChange, className, active }: PropsWithChildren<{
    vertical: boolean,
    className?: string,
-   onOrdersChange?: (orders: number[]) => void,
+   onOrdersChange?: (_orders: number[]) => void,
    active?: boolean
 }>) => {
    const itemsRef = useRef<(HTMLDivElement | null)[]>([]);

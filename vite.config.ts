@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 import react from '@vitejs/plugin-react'
+import eslint from 'vite-plugin-eslint';
 import { peerDependencies } from "./package.json";
 import sass from 'vite-plugin-sass';
 import path from "path";
@@ -25,5 +26,10 @@ export default defineConfig({
          "@public": path.resolve(__dirname, "./public"),
       },
    },
-   plugins: [dts(), react(), sass()],
+   plugins: [
+      dts(),
+      react(),
+      sass(),
+      eslint()
+   ],
 });

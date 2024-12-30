@@ -1,7 +1,7 @@
 import { Page, Space } from "@/app/App";
 import { useRef } from "react";
 
-export const Menu = ({ setPage, pages, activePage }: { pages: (Page | Space)[], setPage: (page: string) => void, activePage: string }) => {
+export const Menu = ({ setPage, pages, activePage }: { pages: (Page | Space)[], setPage: (_page: string) => void, activePage: string }) => {
    const refs = useRef<(HTMLButtonElement | null)[]>([]);
 
    return <div className={'px-3 w-[60px] bg-menu flex h-full flex-col gap-y-3 overflow-hidden py-3'}>

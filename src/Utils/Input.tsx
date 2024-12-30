@@ -7,10 +7,10 @@ export const Input = ({ className, active, _default, placeholder, pattern, type,
    placeholder?: string,
    pattern?: string,
    inputMode?: "email" | "search" | "tel" | "text" | "url" | "none" | "numeric" | "decimal",
-   validate?: (value: string) => boolean,
+   validate?: (_value: string) => boolean,
    type?: HTMLInputTypeAttribute,
    reset?: boolean,
-   onChange?: (value: string) => void
+   onChange?: (_value: string) => void
 }) => {
    const ref = useRef<HTMLInputElement | null>(null);
    const [value, setValue] = useState(_default ?? "");

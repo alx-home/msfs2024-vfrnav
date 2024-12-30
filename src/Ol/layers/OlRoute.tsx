@@ -23,7 +23,7 @@ import blueMarker from '@/images/marker-icon-blue.svg';
 import { MapContext } from "@/MapPage/MapContext";
 
 const useMap = () => {
-   const mapContext = useContext(MapContext)!;
+   const { map } = useContext(MapContext)!;
    const [, setNextId] = useState(1);
    const [modify, setModify] = useState<Modify>();
    const [snap, setSnap] = useState<Snap>();
@@ -37,49 +37,49 @@ const useMap = () => {
    const updateLayer = useCallback((layer: VectorLayer | undefined) => {
       setLayer(oldLayer => {
          if (oldLayer) {
-            mapContext.map.removeLayer(oldLayer);
+            map.removeLayer(oldLayer);
          }
 
          if (layer) {
-            mapContext.map.addLayer(layer);
+            map.addLayer(layer);
          }
          return layer;
       });
-   }, [setLayer]);
+   }, [map]);
 
    const updateModify = useCallback((modify: Modify | undefined) => {
       setModify(oldModify => {
          if (oldModify) {
-            mapContext.map.removeInteraction(oldModify);
+            map.removeInteraction(oldModify);
          }
 
          if (modify) {
-            mapContext.map.addInteraction(modify);
+            map.addInteraction(modify);
          }
 
          return modify;
       });
-   }, [setModify]);
+   }, [map]);
 
    const updateSnap = useCallback((snap: Snap | undefined) => {
       setSnap(oldSnap => {
          if (oldSnap) {
-            mapContext.map.removeInteraction(oldSnap);
+            map.removeInteraction(oldSnap);
          }
 
          if (snap) {
-            mapContext.map.addInteraction(snap);
+            map.addInteraction(snap);
          }
 
          return snap;
       });
-   }, [setSnap]);
+   }, [map]);
 
    const removeRefs = useCallback(() => {
       updateLayer(undefined);
       updateModify(undefined);
       updateSnap(undefined);
-   }, [mapContext.map]);
+   }, [updateLayer, updateModify, updateSnap]);
 
    useEffect(() => {
       removeRefs();
@@ -139,7 +139,7 @@ const useMap = () => {
       return () => {
          removeRefs();
       };
-   }, [mapContext.map, removeRefs, setNewFeatures, setNextId]);
+   }, [map, removeRefs, setNewFeatures, setNextId, source, updateLayer, updateModify, updateSnap]);
 
    useEffect(() => {
       if (modified) {

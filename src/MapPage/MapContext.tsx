@@ -18,11 +18,11 @@ export const MapContext = createContext<{
    cancel?: () => void,
    setAddNav: Dispatch<SetStateAction<(() => void) | undefined>>,
    setCancel: Dispatch<SetStateAction<(() => void) | undefined>>,
-   triggerFlash: (value?: boolean) => void,
-   removeNav: (name: string) => void,
-   activeNav: (name: string, active: boolean) => void,
-   editNav: (name: string, newName: string) => void,
-   reorderNav: (orders: number[]) => void
+   triggerFlash: (_value?: boolean) => void,
+   removeNav: (_name: string) => void,
+   activeNav: (_name: string, _active: boolean) => void,
+   editNav: (_name: string, _newName: string) => void,
+   reorderNav: (_orders: number[]) => void
 } | undefined>(undefined);
 
 const MapContextProvider = ({ children }: PropsWithChildren) => {
@@ -113,7 +113,7 @@ const MapContextProvider = ({ children }: PropsWithChildren) => {
             return orders.map((order, index) => ({ ...data[index], order: order }))
          });
       }
-   }), [map, navData, setNavData, counter, setCounter, flash, setFlash, flashKey, setFlashKey, addNavRequest, setAddNavRequest, cancelRequest, setCancelRequest]);
+   }), [map, navData, setNavData, counter, setCounter, flash, setFlash, flashKey, setFlashKey, setAddNavRequest, setCancelRequest]);
 
    return (
       <MapContext.Provider

@@ -2,12 +2,13 @@ import { Draggable } from "@/Utils/Draggable";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 export class Layer {
+   // eslint-disable-next-line no-unused-vars
    constructor(public src: string, public alt: string, public order: number, public active: boolean) { }
 };
 
 const LayerComp = ({ src, alt, onActiveChange, active }:
    Layer & {
-      onActiveChange: (active: boolean) => void,
+      onActiveChange: (_active: boolean) => void,
    }) => {
    const [transition, setTransition] = useState(false);
    const ref = useRef<HTMLButtonElement | null>(null);
@@ -37,7 +38,7 @@ const LayerComp = ({ src, alt, onActiveChange, active }:
    </button>;
 };
 
-export type OnLayerChange = (layers: { index: number, order?: number, active?: boolean }[]) => void;
+export type OnLayerChange = (_layers: { index: number, order?: number, active?: boolean }[]) => void;
 
 export const Layers = ({ layers, onLayerChange }: { layers: Layer[], onLayerChange: OnLayerChange }) => {
    const childs = useMemo(() => layers.map((layer, index) =>
