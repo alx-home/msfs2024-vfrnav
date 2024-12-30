@@ -4,7 +4,6 @@ import { useMemo } from "react";
 
 export const OlOSMLayer = ({
    opacity,
-   map,
    url,
    crossOrigin,
    order,
@@ -15,5 +14,5 @@ export const OlOSMLayer = ({
    opacity?: number
 }) => {
    const source = useMemo(() => new OSM({ url: url, crossOrigin: crossOrigin }), [url, crossOrigin]);
-   return <OlLayer source={source} map={map} opacity={opacity} order={order} active={active} />;
+   return <OlLayer source={source} opacity={opacity} order={order} active={active} />;
 };

@@ -1,56 +1,82 @@
 import { Map } from "ol";
 import TileLayer from "ol/layer/Tile";
 import { TileImage } from "ol/source";
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useState } from "react";
+import { MapContext } from "@/MapPage/MapContext";
 
 export class OlLayerProp {
-   constructor(public map?: Map, public order?: number, public active?: boolean, public maxZoom?: number, public minZoom?: number) { }
+   constructor(public order?: number, public active?: boolean, public maxZoom?: number, public minZoom?: number) { }
 }
 
-const useLayer = (source: TileImage, map?: Map, opacity?: number, maxZoom?: number, minZoom?: number) => {
-   const layerRef = useRef<TileLayer>();
+const useLayer = (source: TileImage, map?: Map) => {
+   const [layer, setLayer] = useState<TileLayer>();
 
    useEffect(() => {
-      const tileLayer = new TileLayer({
-         opacity: opacity,
-         source: source,
-         maxZoom: maxZoom,
-         minZoom: minZoom
-      });
+      if (map) {
+         setLayer(oldLayer => {
+            if (oldLayer) {
+               map.removeLayer(oldLayer);
+            }
 
-      layerRef.current = tileLayer;
-      map?.addLayer(tileLayer);
+            const layer = new TileLayer({
+               source: source,
+               visible: false
+            })
 
-      return () => { map?.removeLayer(tileLayer); };
-   }, [map, opacity, maxZoom, minZoom, source]);
+            map.addLayer(layer);
 
-   return layerRef.current;
+            return layer;
+         });
+      }
+
+      return () => {
+         setLayer(oldLayer => {
+            if (oldLayer) {
+               map?.removeLayer(oldLayer);
+            }
+
+            return undefined;
+         });
+      };
+   }, [map, source]);
+
+   return layer;
 };
 
-export const OlLayer = ({ opacity, source, map, order, active, maxZoom, minZoom }: OlLayerProp & {
+export const OlLayer = ({ opacity, source, order, active, maxZoom, minZoom }: OlLayerProp & {
    opacity?: number,
    source: TileImage
 }) => {
-   const layer = useLayer(source, map, opacity, maxZoom, minZoom);
+   const mapContext = useContext(MapContext)!;
+   const layer = useLayer(source, mapContext.map);
 
    useEffect(() => {
       layer?.setVisible(active ?? false);
    }, [active, layer]);
 
    useEffect(() => {
+      if (minZoom) {
+         layer?.setMinZoom(minZoom);
+      }
+   }, [minZoom, layer]);
+
+   useEffect(() => {
+      if (maxZoom) {
+         layer?.setMaxZoom(maxZoom);
+      }
+   }, [maxZoom, layer]);
+
+   useEffect(() => {
+      if (opacity) {
+         layer?.setOpacity(opacity);
+      }
+   }, [opacity, layer]);
+
+   useEffect(() => {
       if (order !== undefined) {
          layer?.setZIndex(order);
       }
    }, [order, layer]);
-
-   useEffect(() => {
-      if (active !== undefined) {
-         layer?.setVisible(active);
-         if (order) {
-            layer?.setZIndex(order);
-         }
-      }
-   }, [active, order, layer]);
 
    return <></>;
 };

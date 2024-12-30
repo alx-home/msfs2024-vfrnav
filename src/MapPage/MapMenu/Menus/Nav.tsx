@@ -1,20 +1,18 @@
 
-import { Children, Dispatch, isValidElement, MouseEventHandler, PropsWithChildren, SetStateAction, useEffect, useMemo, useRef, useState } from 'react';
-import Image from 'next/image';
+import { Children, Dispatch, isValidElement, MouseEventHandler, PropsWithChildren, SetStateAction, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Feature } from 'ol';
 import VectorLayer from 'ol/layer/Vector';
-import { MapContext } from '@/MapPage/MapPage';
 
 import { Button } from '@/Utils/Button';
-import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 
-import newFileImg from '@/../public/new-file.svg';
-import importImg from '@/../public/import.svg';
-import exportImg from '@/../public/export.svg';
-import editImg from "@/../public/edit.svg";
-import deleteImg from "@/../public/delete.svg";
+import newFileImg from '@/images/new-file.svg';
+import importImg from '@/images/import.svg';
+import exportImg from '@/images/export.svg';
+import editImg from "@/images/edit.svg";
+import deleteImg from "@/images/delete.svg";
 import { Draggable } from '@/Utils/Draggable';
+import { MapContext } from '@/MapPage/MapContext';
 
 export class NavData {
    constructor(public id: number, public order: number, public name: string, public active: boolean, public shortName: string, public feature: Feature, public layer: VectorLayer) { }
@@ -36,22 +34,22 @@ const Label = ({ name, shortName, editMode }: {
 
 const Edit = ({ onClick, image, alt, background, hidden }: {
    onClick: MouseEventHandler<HTMLButtonElement>,
-   image: string | StaticImport,
+   image: string,
    alt: string,
    background: string,
    hidden: boolean
 }) => {
    return <button className={'flex w-11 h-11 hover:brightness-125 focus:border-2 focus:border-with ' + ' ' + background + (hidden ? ' overflow-hidden hidden' : '')} onClick={onClick}>
-      <Image priority={true} className='w-8 h-8 grow mt-auto mb-auto justify-center' src={image} alt={alt} />
+      <img className='w-8 h-8 grow mt-auto mb-auto justify-center' src={image} alt={alt} />
    </button>;
 };
 
-const Input = ({ mapContext, editMode, setEditMode, name }: {
+const Input = ({ editMode, setEditMode, name }: {
    editMode: boolean,
    setEditMode: Dispatch<SetStateAction<boolean>>,
-   mapContext: MapContext,
    name: string
 }) => {
+   const mapContext = useContext(MapContext)!;
    const textArea = useRef<HTMLInputElement | null>(null);
    useEffect(() => {
       if (editMode) {
@@ -77,13 +75,13 @@ const Input = ({ mapContext, editMode, setEditMode, name }: {
    />;
 };
 
-export const NavItem = ({ name, shortName, active, mapContext, setDraggable }: {
+export const NavItem = ({ name, shortName, active, setDraggable }: {
    active: boolean,
    name: string,
    shortName: string,
-   mapContext: MapContext,
    setDraggable?: Dispatch<SetStateAction<boolean>>
 }) => {
+   const mapContext = useContext(MapContext)!;
    const [editMode, setEditMode] = useState(false);
    const [hover, setHover] = useState(false);
    const [focused, setFocused] = useState(false);
@@ -105,7 +103,7 @@ export const NavItem = ({ name, shortName, active, mapContext, setDraggable }: {
       onMouseLeave={() => setHover(false)}>
       <Button className={'flex flex-row grow @container/label'}
          active={!editMode}
-         onClick={() => mapContext.setNavData((navData) => {
+         onClick={() => mapContext.setNavData(navData => {
             const newData = [...navData];
             const elem = newData.find(e => e.name === name);
             if (elem) {
@@ -114,7 +112,7 @@ export const NavItem = ({ name, shortName, active, mapContext, setDraggable }: {
             return newData;
          })}>
          <Label name={name} shortName={shortName} editMode={editMode} />
-         <Input mapContext={mapContext} editMode={editMode} setEditMode={setEditMode} name={name} />
+         <Input editMode={editMode} setEditMode={setEditMode} name={name} />
       </Button>
       <div className={'transition duration-std flex flex-row gap-2 overflow-hidden max-w-24 h-11 mt-auto mb-auto ' + ((hover || focused) ? 'w-full' : 'w-0')}
          style={{ display: (editMode ? 'none' : ''), transitionProperty: 'width' }}
@@ -129,7 +127,7 @@ export const NavItem = ({ name, shortName, active, mapContext, setDraggable }: {
 
 const Add = ({ name, image, onClick, disabled, active }: PropsWithChildren<{
    name: string,
-   image: string | StaticImport,
+   image: string,
    onClick: MouseEventHandler<HTMLButtonElement>,
    disabled?: boolean,
    active?: boolean
@@ -137,7 +135,7 @@ const Add = ({ name, image, onClick, disabled, active }: PropsWithChildren<{
    return <Button onClick={onClick} active={active ?? true} disabled={disabled ?? false} className='px-2 min-h-8 pt-1 flex flex-row grow @container'>
       <div className='hidden @[47px]:flex'>{name}</div>
       <div className='flex grow justify-center @[47px]:hidden'>
-         <Image priority={true} src={image} alt={name} className='invert' />
+         <img src={image} alt={name} className='invert' />
       </div>
    </Button>;
 };
@@ -163,9 +161,9 @@ const Item = ({ children, className, setDraggable }: PropsWithChildren<{
    return <div className={className + ' gap-x-0'}>{child}</div>;
 };
 
-export const Nav = ({ children, mapContext }: PropsWithChildren<{
-   mapContext: MapContext
+export const Nav = ({ children }: PropsWithChildren<{
 }>) => {
+   const mapContext = useContext(MapContext)!;
    const key = mapContext.navData.reduce((prev, elem) => { return prev + ";" + elem.name; }, "");
    const [draggable, setDraggable] = useState(true);
    const childs = useMemo(() => Children.toArray(children).filter(child => isValidElement(child)).map((child, index) => {
@@ -190,7 +188,7 @@ export const Nav = ({ children, mapContext }: PropsWithChildren<{
             {childs}
          </Draggable>
          <div className='flex gap-x-4 mt-2'>
-            <Add name='Add' image={newFileImg} onClick={() => { mapContext.addNav() }} />
+            <Add name='Add' image={newFileImg} onClick={() => mapContext.addNav?.()} />
             <Add name='Import' image={importImg} disabled={true} onClick={() => { }} />
          </div>
          <Add name='Export' image={exportImg} disabled={true} onClick={() => { }} />

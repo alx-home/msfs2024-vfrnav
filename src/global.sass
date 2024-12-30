@@ -104,7 +104,10 @@
       --foreground: #ededed
 
 html,
-.map
+.map,
+#root,
+#root > *,
+body
    height: 100%
 
 html
@@ -128,9 +131,6 @@ html
    scrollbar-width: thin !important
    scrollbar-color: rgb(107 114 128) rgb(17 24 39) !important
    scrollbar-gutter: stable !important
-
-body
-   height: 100%
 
 body > div
    height: 100%

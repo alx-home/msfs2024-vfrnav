@@ -1,21 +1,26 @@
 import { MapMenu, Menu } from "@/MapPage/MapMenu/MapMenu";
-import { NavData } from '@/MapPage/MapMenu/Menus/Nav';
 import { OlOSMLayer } from "@/Ol/layers/OlOSMLayer";
 import { OlRouteLayer } from "@/Ol/layers/OlRoute";
 import { OlWMTSLayer } from "@/Ol/layers/OlWMTSLayer";
 import { OlMap } from "@/Ol/OlMap";
 import { getTopLeft, getWidth } from 'ol/extent.js';
 import { get as getProjection } from 'ol/proj.js';
-import { Dispatch, MutableRefObject, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
-import flightPlanImg from '@/../public/flight-plan.svg';
-import layersImg from '@/../public/layers.svg';
-import Image from "next/image";
+import flightPlanImg from '@/images/flight-plan.svg';
+import layersImg from '@/images/layers.svg';
+import oaciImg from '@/images/oaci.jpg';
+import dsfImg from '@/images/dsf.jpg';
+import map4freeImg from '@/images/map4free.jpg';
+import bingImg from '@/images/bing.jpg';
+import opentopoImg from '@/images/opentopo.jpg';
+import ifrLowImg from '@/images/ifr_low.jpg';
+import ifrHighImg from '@/images/ifr_high.jpg';
+import sectionalImg from '@/images/sectional.jpg';
+import osmImg from '@/images/osm.jpg';
 
-import { Feature } from "ol";
-import VectorLayer from "ol/layer/Vector";
-import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import { OnLayerChange } from './MapMenu/Menus/Layers';
+import MapContextProvider, { MapContext } from "./MapContext";
 
 const projection = getProjection('EPSG:3857')!;
 const projectionExtent = projection.getExtent();
@@ -29,94 +34,11 @@ for (let z = 0; z < 19; ++z) {
    matrixIds[z] = z;
 }
 
-export class MapContext {
-   constructor(
-      public readonly addNavRef: MutableRefObject<(() => void) | undefined>,
-      public readonly cancelRef: MutableRefObject<(() => void) | undefined>,
-      public readonly navData: NavData[],
-      public readonly setNavData: Dispatch<SetStateAction<NavData[]>>,
-      public readonly counter: number,
-      public readonly setCounter: Dispatch<SetStateAction<number>>,
-      public readonly flash: boolean,
-      public readonly setFlash: Dispatch<SetStateAction<boolean>>,
-      public readonly flashKey: number,
-      public readonly setFlashKey: Dispatch<SetStateAction<number>>
-   ) { }
-
-   public triggerFlash(value?: boolean) {
-      if (value ?? true) {
-         this.setFlashKey(key => key + 1);
-      }
-      this.setFlash(value ?? true);
-   }
-
-   public addNav() {
-      this.addNavRef?.current?.();
-   }
-
-   public reorderNav(orders: number[]) {
-      this.setNavData(data => {
-         return orders.map((order, index) => ({ ...data[index], order: order }))
-      });
-   }
-
-   public cancel() {
-      this.cancelRef?.current?.();
-   }
-
-   public editNav(name: string, newName: string) {
-      this.setNavData(items => {
-         const newItems = [...items];
-         const item = newItems.find((item) => item.name === name);
-         if (item) {
-            item.name = newName;
-         }
-         return newItems;
-      })
-   }
-   public activeNav(name: string, active: boolean) {
-      this.setNavData(items => {
-         const newItems = [...items];
-         newItems.find((item) => item.name === name)!.active = active;
-         return newItems;
-      });
-   }
-
-   public removeNav(name: string) {
-      this.setNavData(items => {
-         const newItems = [...items];
-         const deleteIndex = newItems.findIndex((item) => item.name === name);
-         const deleteOrder = newItems[deleteIndex].order;
-         newItems.splice(deleteIndex, 1);
-         return newItems.map(elem => {
-            if (elem.order > deleteOrder) {
-               return { ...elem, order: (elem.order - 1) };
-            }
-            return elem;
-         });
-      });
-   }
-
-   static readonly use = () => {
-      const addNav = useRef<() => void>();
-      const cancel = useRef<() => void>();
-      const [navData, setNavData] = useState<NavData[]>([]);
-      const [counter, setCounter] = useState(0);
-      const [flash, setFlash] = useState(false);
-      const [flashKey, setFlashKey] = useState(0);
-
-      const context = useMemo<MapContext>(() => new MapContext(addNav, cancel, navData, setNavData,
-         counter, setCounter, flash, setFlash, flashKey, setFlashKey), [navData, counter, flash, flashKey]);
-
-      return context;
-   };
-};
-
 const OverlayItem = ({ menu, setMenu, setOpen, image, alt, currentMenu }: {
    menu: Menu,
    setMenu: Dispatch<SetStateAction<Menu>>,
    setOpen: Dispatch<SetStateAction<boolean>>,
-   image: string | StaticImport,
+   image: string,
    alt: string,
    currentMenu: Menu
 }) => {
@@ -126,7 +48,7 @@ const OverlayItem = ({ menu, setMenu, setOpen, image, alt, currentMenu }: {
          setMenu(currentMenu);
       }}
       onMouseUp={e => e.currentTarget.blur()}>
-      <Image priority={true} src={image} alt={alt} />
+      <img src={image} alt={alt} />
    </button>;
 };
 
@@ -141,14 +63,14 @@ const Overlay = ({ menu, setMenu, setOpen }: {
    </div>;
 };
 
-const SpinAnimation = ({ mapContext }: {
-   mapContext: MapContext
-}) => {
+const SpinAnimation = () => {
+   const { triggerFlash, flash, flashKey } = useContext(MapContext)!;
+
    return <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center" >
-      <span key={mapContext.flashKey}
+      <span key={flashKey}
          className={"animate-ping-1 m-auto inline-flex aspect-square w-2/4 rounded-full bg-sky-400 opacity-75 justify-center"
-            + (mapContext.flash ? '' : ' hidden')}
-         onAnimationEnd={() => mapContext.triggerFlash(false)}
+            + (flash ? '' : ' hidden')}
+         onAnimationEnd={() => triggerFlash(false)}
       >
          <h1 className="flex justify-center text-[2vw] m-auto">
             Start Drawing !
@@ -177,53 +99,53 @@ export const MapPage = ({ active }: {
                matrixIds: matrixIds,
             }}
          />,
-         src: '/oaci.jpg',
+         src: oaciImg,
          alt: 'oaci layer',
          active: true
       },
       {
          olLayer: <OlOSMLayer key="dsf" url="https://secais.dfs.de/static-maps/icao500/tiles/{z}/{x}/{y}.png" crossOrigin={null} />,
-         src: '/dsf.jpg',
+         src: dsfImg,
          alt: 'dsf layer'
       },
       {
          olLayer: <OlOSMLayer key="map-for-free" url="https://maps-for-free.com/layer/relief/z{z}/row{y}/{z}_{x}-{y}.jpg" crossOrigin={null} />,
-         src: '/map4free.jpg',
+         src: map4freeImg,
          alt: 'map for free layer'
       },
       {
          olLayer: <OlOSMLayer key="google" url="https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}" crossOrigin={null} />,
-         src: '/bing.jpg',
+         src: bingImg,
          alt: 'google layer'
       },
       {
          olLayer: <OlOSMLayer key="open-topo" url="https://tile.opentopomap.org/{z}/{x}/{y}.png" crossOrigin={null} />,
-         src: '/opentopo.jpg',
+         src: opentopoImg,
          alt: 'open topo layer'
       },
       {
          olLayer: <OlOSMLayer key="ifr low" url="https://maps.iflightplanner.com/Maps/Tiles/IFRLow/Z{z}/{y}/{x}.png" crossOrigin={null} />,
-         src: '/ifr_low.jpg',
+         src: ifrLowImg,
          alt: 'ifr low layer'
       },
       {
          olLayer: <OlOSMLayer key="ifr high" url="https://maps.iflightplanner.com/Maps/Tiles/IFRHigh/Z{z}/{y}/{x}.png" crossOrigin={null} />,
-         src: '/ifr_high.jpg',
+         src: ifrHighImg,
          alt: 'ifr high layer'
       },
       {
          olLayer: <OlOSMLayer key="sectional" url="https://maps.iflightplanner.com/Maps/Tiles/Sectional/Z{z}/{y}/{x}.png" crossOrigin={null} />,
-         src: '/sectional.jpg',
+         src: sectionalImg,
          alt: 'sectional layer'
       },
       {
          olLayer: <OlOSMLayer key="osm" />,
-         src: '/osm.jpg',
+         src: osmImg,
          alt: 'osm layer'
       },
       // {
       //    olLayer: <OlBingLayer key="bing" />,
-      //    src: '/bing.jpg',
+      //    src: bingImg,
       //    alt: 'bing layer'
       // }
    ].map((elem, index) => ({
@@ -231,7 +153,7 @@ export const MapPage = ({ active }: {
       order: index,
       active: elem.active ?? false
    })));
-   const mapContext = MapContext.use();
+
    const onLayerChange = useCallback<OnLayerChange>((values) =>
       setLayers(layers => {
          const newLayers = [...layers];
@@ -256,31 +178,26 @@ export const MapPage = ({ active }: {
       }
    }, [active]);
 
-   return <div className={'transition transition-std relative grow h-100' + opacity} style={active ? {} : { display: 'none' }}>
-      <OlMap id='map' className='absolute w-full h-full top-0 left-0' mapContext={mapContext}>
-         {layers.map(layer => ({ ...layer.olLayer, props: { ...layer.olLayer.props, order: layers.length - 1 - layer.order, active: layer.active } }))}
-         <OlRouteLayer
-            zIndex={layers.length}
-            mapContext={mapContext}
-            order={layers.length}
-            onAddFeature={(feature: Feature, layer: VectorLayer) => {
-               mapContext.setNavData(items => {
-                  const { counter } = mapContext;
-                  return [...items, { id: counter, order: items.length, active: active, name: `New Nav ${counter}`, shortName: `${counter}`, feature: feature, layer: layer }];
-               });
-               mapContext.setCounter(counter => counter + 1);
-            }} />
-      </OlMap>
-      <div className="absolute z-10 pointer-events-none flex grow justify-end w-full h-full top-0 left-0">
-         <div className={"relative flex grow justify-end h-full overflow-hidden"} >
-            <SpinAnimation mapContext={mapContext} />
-            <Overlay menu={menu} setMenu={setMenu} setOpen={setOpen} />
-         </div>
-         <div className="flex flex-row pointer-events-auto">
-            <MapMenu key={"map-menu"} open={open} setOpen={setOpen} menu={menu} layers={layers}
-               mapContext={mapContext}
-               onLayerChange={onLayerChange} />
+   const olLayers = useMemo(() => layers.map(layer => ({ ...layer.olLayer, props: { ...layer.olLayer.props, order: layers.length - 1 - layer.order, active: layer.active } })), [layers]);
+
+   return <MapContextProvider>
+      <div className={'transition transition-std relative grow h-100' + opacity} style={active ? {} : { display: 'none' }}>
+         <OlMap id='map' className='absolute w-full h-full top-0 left-0'>
+            {olLayers}
+            <OlRouteLayer
+               zIndex={layers.length}
+               order={layers.length} />
+         </OlMap>
+         <div className="absolute z-10 pointer-events-none flex grow justify-end w-full h-full top-0 left-0">
+            <div className={"relative flex grow justify-end h-full overflow-hidden"} >
+               <SpinAnimation />
+               <Overlay menu={menu} setMenu={setMenu} setOpen={setOpen} />
+            </div>
+            <div className="flex flex-row pointer-events-auto">
+               <MapMenu key={"map-menu"} open={open} setOpen={setOpen} menu={menu} layers={layers}
+                  onLayerChange={onLayerChange} />
+            </div>
          </div>
       </div>
-   </div>;
+   </MapContextProvider>;
 }

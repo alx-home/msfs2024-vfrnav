@@ -4,7 +4,6 @@ import { useMemo } from "react";
 
 export const OlWMSLayer = ({
    opacity,
-   map,
    url,
    crossOrigin,
    order,
@@ -20,5 +19,5 @@ export const OlWMSLayer = ({
          crossOrigin: crossOrigin ?? "anonymous"
       },
    }), [crossOrigin, url]);
-   return <OlLayer source={source} map={map} opacity={opacity} order={order} active={active} />;
+   return <OlLayer source={source} opacity={opacity} order={order} active={active} />;
 };

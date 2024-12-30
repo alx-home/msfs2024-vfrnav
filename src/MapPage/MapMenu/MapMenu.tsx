@@ -4,24 +4,24 @@ import { MouseContext } from '@/Events/MouseContext';
 import { Layer, Layers, OnLayerChange } from './Menus/Layers';
 import { Nav, NavItem } from './Menus/Nav';
 
-import { MapContext } from '../MapPage';
 import useMouseDrag from '@/Events/MouseDrag';
 import { Scroll } from '@/Utils/Scroll';
+import { MapContext } from '../MapContext';
 
 export enum Menu { layers, nav };
 
-export const MapMenu = ({ open, setOpen, menu, layers, onLayerChange, mapContext }: {
+export const MapMenu = ({ open, setOpen, menu, layers, onLayerChange }: {
    open: boolean,
    setOpen: Dispatch<SetStateAction<boolean>>,
    menu: Menu,
    layers: Layer[],
    onLayerChange: OnLayerChange,
-   mapContext: MapContext
 }) => {
    const closeWidth = 40;
    const minWidth = 120;
    const maxWidth = 250;
 
+   const mapContext = useContext(MapContext)!;
    const [initialDelta, setInitialDelta] = useState<number | undefined>();
    const [width, setWidth] = useState(0);
    const [defaultWidth, setDefaultWidth] = useState(minWidth);
@@ -132,9 +132,9 @@ export const MapMenu = ({ open, setOpen, menu, layers, onLayerChange, mapContext
          style={{ width: width, ...(width > 0 ? {} : { display: 'none' }) }}>
          {menu === Menu.layers ?
             <Layers layers={layers} onLayerChange={onLayerChange} /> :
-            <Nav mapContext={mapContext}>
+            <Nav>
                {mapContext.navData.map((item) =>
-                  <NavItem key={item.id} active={item.active} name={item.name} shortName={item.shortName} mapContext={mapContext} />
+                  <NavItem key={item.id} active={item.active} name={item.name} shortName={item.shortName} />
                )}
             </Nav>}
       </Scroll>

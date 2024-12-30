@@ -1,8 +1,6 @@
-'use client'
-
 import { OlLayerProp } from "./OlLayer";
 import VectorSource from "ol/source/Vector";
-import { Feature, Map } from "ol";
+import { Feature } from "ol";
 import { Geometry, LineString, MultiLineString, SimpleGeometry } from "ol/geom";
 import VectorLayer from "ol/layer/Vector";
 import Draw from "ol/interaction/Draw";
@@ -17,44 +15,75 @@ import { toContext } from "ol/render";
 import Fill from "ol/style/Fill";
 import { Coordinate } from "ol/coordinate";
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { MapContext } from "@/MapPage/MapPage";
 import { SettingsContext } from "@/Settings";
 
-const useMap = (map?: Map) => {
+import greenMarker from '@/images/marker-icon-green.svg';
+import redMarker from '@/images/marker-icon-red.svg';
+import blueMarker from '@/images/marker-icon-blue.svg';
+import { MapContext } from "@/MapPage/MapContext";
+
+const useMap = () => {
+   const mapContext = useContext(MapContext)!;
    const [, setNextId] = useState(1);
-   const sourceRef = useRef<VectorSource<Feature<Geometry>>>();
-   const modifyRef = useRef<Modify>();
-   const snapRef = useRef<Snap>();
-   const layerRef = useRef<VectorLayer>();
+   const [modify, setModify] = useState<Modify>();
+   const [snap, setSnap] = useState<Snap>();
+   const [layer, setLayer] = useState<VectorLayer>();
+   const source = useMemo(() => new VectorSource<Feature<Geometry>>({
+      features: []
+   }), []);
    const [modified, setModified] = useState<Feature[]>();
    const [newFeatures, setNewFeatures] = useState<Feature[]>();
 
-   const removeRefs = useCallback(() => {
-      if (layerRef.current) {
-         map?.removeLayer(layerRef.current);
-         layerRef.current = undefined;
-      }
-      if (modifyRef.current) {
-         map?.removeInteraction(modifyRef.current);
-         modifyRef.current = undefined;
-      }
-      if (snapRef.current) {
-         map?.removeInteraction(snapRef.current);
-         snapRef.current = undefined;
-      }
+   const updateLayer = useCallback((layer: VectorLayer | undefined) => {
+      setLayer(oldLayer => {
+         if (oldLayer) {
+            mapContext.map.removeLayer(oldLayer);
+         }
 
-      sourceRef.current = undefined;
-   }, [map]);
+         if (layer) {
+            mapContext.map.addLayer(layer);
+         }
+         return layer;
+      });
+   }, [setLayer]);
+
+   const updateModify = useCallback((modify: Modify | undefined) => {
+      setModify(oldModify => {
+         if (oldModify) {
+            mapContext.map.removeInteraction(oldModify);
+         }
+
+         if (modify) {
+            mapContext.map.addInteraction(modify);
+         }
+
+         return modify;
+      });
+   }, [setModify]);
+
+   const updateSnap = useCallback((snap: Snap | undefined) => {
+      setSnap(oldSnap => {
+         if (oldSnap) {
+            mapContext.map.removeInteraction(oldSnap);
+         }
+
+         if (snap) {
+            mapContext.map.addInteraction(snap);
+         }
+
+         return snap;
+      });
+   }, [setSnap]);
+
+   const removeRefs = useCallback(() => {
+      updateLayer(undefined);
+      updateModify(undefined);
+      updateSnap(undefined);
+   }, [mapContext.map]);
 
    useEffect(() => {
       removeRefs();
 
-      const features: Feature<Geometry>[] = [];
-
-      const source = new VectorSource<Feature<Geometry>>({
-         features: features
-      });
-      sourceRef.current = source;
       source.on('addfeature', e => {
          if (e.feature && e.feature.getId() === undefined) {
             setNextId(id => {
@@ -77,12 +106,9 @@ const useMap = (map?: Map) => {
          }
       });
 
-      const layer_ = new VectorLayer({
+      updateLayer(new VectorLayer({
          source: source
-      });
-      layerRef.current = layer_;
-
-      map?.addLayer(layer_);
+      }));
 
       const modify = new Modify({
          source: source,
@@ -107,16 +133,13 @@ const useMap = (map?: Map) => {
          });
       });
 
-      modifyRef.current = modify;
-      snapRef.current = snap;
-
-      map?.addInteraction(modify);
-      map?.addInteraction(snap);
+      updateModify(modify);
+      updateSnap(snap);
 
       return () => {
          removeRefs();
       };
-   }, [map, removeRefs, setNewFeatures, setNextId]);
+   }, [mapContext.map, removeRefs, setNewFeatures, setNextId]);
 
    useEffect(() => {
       if (modified) {
@@ -131,66 +154,77 @@ const useMap = (map?: Map) => {
    }, [newFeatures, setNewFeatures]);
 
    return {
-      source: sourceRef.current,
-      modify: modifyRef.current,
-      snap: snapRef.current,
-      layer: layerRef.current,
+      source: source,
+      modify: modify,
+      snap: snap,
+      layer: layer,
       modified: modified,
       newFeatures: newFeatures
    };
 };
 
-const useDraw = (mapContext: MapContext, layer?: VectorLayer, map?: Map, source?: VectorSource<Feature<Geometry>>) => {
-   const drawRef = useRef<Draw>();
-   useEffect(() => {
-      mapContext.addNavRef.current = () => {
-         if (drawRef.current) {
-            map?.removeInteraction(drawRef.current);
+const useDraw = (source?: VectorSource<Feature<Geometry>>) => {
+   const { map, setAddNav, triggerFlash } = useContext(MapContext)!;
+   const [draw, setDraw] = useState<Draw>();
+
+   const updateDraw = useCallback((draw: Draw | undefined) => {
+      setDraw(oldDraw => {
+         if (oldDraw) {
+            map.removeInteraction(oldDraw);
          }
 
+         if (draw) {
+            map.addInteraction(draw);
+         }
+
+         return draw;
+      });
+   }, [setDraw, map]);
+
+   useEffect(() => {
+      setAddNav(() => () => {
          const draw = new Draw({
             type: 'MultiLineString',
             source: source
          });
-         drawRef.current = draw;
-
-         map?.addInteraction(drawRef.current);
-         mapContext.triggerFlash();
+         updateDraw(draw);
+         triggerFlash();
 
          draw.on('drawend', () => {
-            map?.removeInteraction(draw);
+            updateDraw(undefined);
          });
-      };
-   }, [map, mapContext, source]);
+      });
+   }, [setAddNav, triggerFlash, updateDraw, source]);
 
    useEffect(() => () => {
-      if (drawRef.current) {
-         map?.removeInteraction(drawRef.current);
-         drawRef.current = undefined;
-      }
-   }, [map]);
+      updateDraw(undefined);
+   }, [updateDraw]);
 
-   return { draw: drawRef.current };
+   return { draw: draw };
 }
 
 export const OlRouteLayer = ({
-   map,
-   mapContext,
-   onAddFeature,
    order,
    zIndex
 }: {
-   mapContext: MapContext,
-   onAddFeature: (feature: Feature, layer: VectorLayer) => void,
    zIndex: number
 } & OlLayerProp) => {
-   const redMarker = useRef<HTMLImageElement>();
-   const blueMarker = useRef<HTMLImageElement>();
-   const greenMarker = useRef<HTMLImageElement>();
+   const { setNavData, setCounter, counter, map, setCancel, navData } = useContext(MapContext)!;
+   const settings = useContext(SettingsContext)!;
 
-   const settings = useContext(SettingsContext);
-   const { source, layer, modified, newFeatures } = useMap(map);
-   const { draw } = useDraw(mapContext, layer, map, source);
+   const { source, layer, modified, newFeatures } = useMap();
+   const { draw } = useDraw(source);
+
+   const greenMarkerImg = useRef<HTMLImageElement | null>(null);
+   const redMarkerImg = useRef<HTMLImageElement | null>(null);
+   const blueMarkerImg = useRef<HTMLImageElement | null>(null);
+
+   const onAddFeature = useCallback(((feature: Feature, layer: VectorLayer) => {
+      setNavData(items => {
+         return [...items, { id: counter, order: items.length, active: true, name: `New Nav ${counter}`, shortName: `${counter}`, feature: feature, layer: layer }];
+      });
+      setCounter(counter => counter + 1);
+   }), [setNavData, setCounter, counter]);
 
    useEffect(() => {
       newFeatures?.forEach(feature => {
@@ -235,19 +269,13 @@ export const OlRouteLayer = ({
                   coords_.forEach((coord, index) => {
                      if (index === 0) {
                         // First Coord
-                        if (greenMarker.current) {
-                           context.drawImage(greenMarker.current, coord[0] - 25, coord[1] - 50, 50, 50);
-                        }
+                        context.drawImage(greenMarkerImg.current!, coord[0] - 25, coord[1] - 50, 50, 50);
                      } else if (index === coords_.length - 1) {
                         // Last Coord
-                        if (redMarker.current) {
-                           context.drawImage(redMarker.current, coord[0] - 25, coord[1] - 50, 50, 50);
-                        }
+                        context.drawImage(redMarkerImg.current!, coord[0] - 25, coord[1] - 50, 50, 50);
                      } else {
                         // Coord in between
-                        if (blueMarker.current) {
-                           context.drawImage(blueMarker.current, coord[0] - 25, coord[1] - 50, 50, 50);
-                        }
+                        context.drawImage(blueMarkerImg.current!, coord[0] - 25, coord[1] - 50, 50, 50);
                      }
                   });
 
@@ -298,27 +326,6 @@ export const OlRouteLayer = ({
    }, [settings.speed]);
 
    useEffect(() => {
-      {
-         const image = new Image();
-         image.src = '/marker-icon-green.svg';
-
-         greenMarker.current = image;
-      }
-      {
-         const image = new Image();
-         image.src = '/marker-icon-red.svg';
-
-         redMarker.current = image;
-      }
-      {
-         const image = new Image();
-         image.src = '/marker-icon-blue.svg';
-
-         blueMarker.current = image;
-      }
-   }, []);
-
-   useEffect(() => {
       layer?.setZIndex(zIndex);
    }, [zIndex, layer]);
 
@@ -335,26 +342,25 @@ export const OlRouteLayer = ({
    }, [order, layer]);
 
    useEffect(() => {
-      mapContext.cancelRef.current = () => {
+      setCancel(() => () => {
          if (draw) {
-            map?.removeInteraction(draw);
+            map.removeInteraction(draw);
          }
-      };
-   }, [map, mapContext.cancelRef, draw]);
+      });
+   }, [map, setCancel, draw]);
 
    useEffect(() => {
       if (modified) {
          modified.forEach((feature) => {
-            const data = mapContext.navData.find(elem => elem.feature.getId() === feature.getId());
-            console.assert(data);
-            data!.feature = feature
+            const data = navData.find(elem => elem.feature.getId() === feature.getId());
+            if (data) { data.feature = feature; }
          });
       }
-   }, [modified, mapContext.navData]);
+   }, [modified, navData]);
 
    useEffect(() => {
       if (source) {
-         const features = mapContext.navData.filter(data => data.active).toSorted((left, right) => left.order - right.order).map(data => {
+         const features = navData.filter(data => data.active).toSorted((left, right) => left.order - right.order).map(data => {
             const feature = data.feature.clone();
             feature.setId(data.feature.getId());
             return feature;
@@ -362,7 +368,7 @@ export const OlRouteLayer = ({
          source.clear();
          source.addFeatures(features);
       }
-   }, [mapContext.navData, source]);
+   }, [navData, source]);
 
 
    useEffect(() => {
@@ -371,7 +377,9 @@ export const OlRouteLayer = ({
       }
    }, [order, layer]);
 
-   // create and add vector source layer
-
-   return <></>;
+   return <div className="hidden">
+      <img ref={greenMarkerImg} src={greenMarker} alt='start marker' />
+      <img ref={redMarkerImg} src={redMarker} alt='destination marker' />
+      <img ref={blueMarkerImg} src={blueMarker} alt='intermediate marker' />
+   </div>;
 };

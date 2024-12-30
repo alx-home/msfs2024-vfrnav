@@ -6,38 +6,45 @@
       "dom.iterable",
       "esnext"
     ],
-    // "declaration": false /* Generate .d.ts files from TypeScript and JavaScript files in your project. */,
+    "declaration": true,
+    "declarationDir": "types",
+    // "sourceMap": true,
     // "declarationMap": false /* Create sourcemaps for d.ts files. */,
-    // "sourceMap": false /* Create source map files for emitted JavaScript files. */,
+    /* Bundler mode */
+    "moduleResolution": "bundler", // Specifies how modules are resolved when bundling.
+    "allowImportingTsExtensions": true, // Allows importing TypeScript files with extensions.
+    "jsx": "preserve", // Configures JSX support for React.
+    /* --- Bundler mode */
     "allowJs": false,
     "skipLibCheck": true,
+    /* Linting */
     "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    // "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    // "jsx": "preserve",
     "incremental": true,
     "experimentalDecorators": true /* Enable experimental support for TC39 stage 2 draft decorators. */,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@public/*": [
+        "./public/*"
       ]
     },
     "forceConsistentCasingInFileNames": true
   },
   "include": [
-    "next-env.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
-    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

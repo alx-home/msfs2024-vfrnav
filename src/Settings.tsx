@@ -7,14 +7,7 @@ export const SettingsContext = createContext<{
    setSpeed: (speed: number) => void,
    setAdjustHeading: (enable: boolean) => void,
    setAdjustTime: (enable: boolean) => void
-}>({
-   speed: 95,
-   adjustHeading: true,
-   adjustTime: true,
-   setSpeed: () => { },
-   setAdjustHeading: () => { },
-   setAdjustTime: () => { }
-});
+} | undefined>(undefined);
 
 const SettingsContextProvider = ({ children }: PropsWithChildren) => {
    const [speed, setSpeed] = useState(95);

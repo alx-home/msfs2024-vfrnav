@@ -1,5 +1,3 @@
-'use client'
-
 import MouseContextProvider from '@/Events/MouseContext';
 
 import "./ol.css";
@@ -7,12 +5,11 @@ import '@/app/page.css'
 import { MapPage } from '@/MapPage/MapPage';
 import { Menu } from '@/app/Menu';
 import { useState } from 'react';
-import Image from "next/image";
 
-import mapImg from '@/../public/map.svg';
-import navlogImg from '@/../public/navlog.svg';
-import settingsImg from '@/../public/settings.svg';
-import creditsImg from '@/../public/credits.svg';
+import mapImg from '@/images/map.svg';
+import navlogImg from '@/images/navlog.svg';
+import settingsImg from '@/images/settings.svg';
+import creditsImg from '@/images/credits.svg';
 import { CreditsPage } from '@/CreditsPage/CreditsPage';
 import { SettingsPage } from '@/SettingsPage/SettingsPage';
 import SettingsContextProvider from '@/Settings';
@@ -38,9 +35,14 @@ export class Page {
 };
 
 export class Space {
-  constructor(public readonly index: number) { }
+  constructor(index: number) {
+    this.index = index;
+    this.elem = <div className='my-1' key={'space_' + this.index}></div>;
+  }
+
+  public readonly index: number;
   public readonly type: string = 'space';
-  public readonly elem: JSX.Element = <div className='my-1' key={'space_' + this.index}></div>;
+  public readonly elem: JSX.Element;
 };
 
 export const App = () => {
@@ -48,24 +50,24 @@ export const App = () => {
   const pages: (Page | Space)[] = [
     new Page({
       name: "map",
-      icon: <Image priority={true} src={mapImg} alt='map' />,
+      icon: <img src={mapImg} alt='map' />,
       elem: <MapPage key="map" active={page === "map"} />
     }),
     new Page({
       name: "navlog",
-      icon: <Image priority={true} src={navlogImg} alt='nav log' />,
+      icon: <img src={navlogImg} alt='nav log' />,
       elem: <div key="nvlog" />,
       disabled: true
     }),
     new Page({
       name: "settings",
-      icon: <Image priority={true} src={settingsImg} alt='settings' />,
+      icon: <img src={settingsImg} alt='settings' />,
       elem: <SettingsPage key="settings" active={page === "settings"} />
     }),
     new Space(1),
     new Page({
       name: "credits",
-      icon: <Image priority={true} src={creditsImg} alt='credits' />,
+      icon: <img src={creditsImg} alt='credits' />,
       elem: <CreditsPage key="credits" active={page === "credits"} />
     })
   ];

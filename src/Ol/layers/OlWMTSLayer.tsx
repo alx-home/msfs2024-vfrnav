@@ -16,7 +16,6 @@ export const OlWMTSLayer = ({
    tileGrid,
    style,
    wrapX,
-   map,
    order,
    active
 }: {
@@ -46,5 +45,5 @@ export const OlWMTSLayer = ({
       style: style ?? 'normal',
       wrapX: wrapX ?? true,
    }), [format, layer, matrixSet, projection, style, tileGrid, url, version, wrapX]);
-   return <OlLayer source={source} map={map} opacity={opacity} order={order} active={active} />;
+   return <OlLayer source={source} opacity={opacity} order={order} active={active} />;
 };

@@ -1,8 +1,10 @@
 import { Scroll } from "@/Utils/Scroll";
 import { PropsWithChildren, useEffect, useState } from "react";
 
-const Section = ({ children, title }: PropsWithChildren<{ title: string }>) => {
-   return <ul className="transition transition-std flex flex-col gap-2 [&>*]:text-center hover:bg-white hover:text-slate-700 p-12">
+const Section = ({ children, title }: PropsWithChildren<{
+   title: string
+}>) => {
+   return <ul className="transition transition-std flex flex-col gap-2 [&>*]:text-center hover:bg-white hover:text-slate-700 p-12 px-20 first:pt-20 last:pb-20">
       <h1 className="mb-4">{title}</h1>
       {children}
    </ul>;

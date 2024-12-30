@@ -3,8 +3,7 @@ import { Input } from "@/Utils/Input";
 import { Scroll } from "@/Utils/Scroll";
 import { Children, HTMLInputTypeAttribute, isValidElement, PropsWithChildren, useContext, useEffect, useMemo, useState } from 'react';
 
-import undoImg from '@/../public/undo.svg';
-import Image from "next/image";
+import undoImg from '@/images/undo.svg';
 import { SettingsContext } from "@/Settings";
 
 const List = ({ children }: PropsWithChildren) => {
@@ -42,7 +41,7 @@ const Item = ({ children, name, category, className, onReset }: PropsWithChildre
       </div>
       <div className="w-8">
          <div className="p-1">
-            <Image priority={true} className="invert hover:filter-msfs cursor-pointer" src={undoImg} alt='undo'
+            <img className="invert hover:filter-msfs cursor-pointer" src={undoImg} alt='undo'
                onClick={() => { setReset(true) }} />
          </div>
       </div>
@@ -120,6 +119,7 @@ const Group = ({ children, name }: PropsWithChildren<{
 export const SettingsPage = ({ active }: {
    active: boolean
 }) => {
+   const settings = useContext(SettingsContext)!;
    const [opacity, setOpacity] = useState(' opacity-0');
 
    useEffect(() => {
@@ -129,8 +129,6 @@ export const SettingsPage = ({ active }: {
          setOpacity(' opacity-0');
       }
    }, [active]);
-
-   const settings = useContext(SettingsContext);
 
    return <div className="flex grow justify-center m-2 p-4 basis-0" style={active ? {} : { display: 'none' }}>
       <div className={"transition transition-std p-4 max-w-[1280px] h-full  m-auto flex text-left flex-col"
