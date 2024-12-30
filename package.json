@@ -2,9 +2,12 @@
   "name": "@efb/msfs2024-vfrnav",
   "version": "1.0.0",
   "type": "module",
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.es.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/App.cjs.js",
+  "module": "dist/App.es.js",
+  "files": [
+    "dist"
+  ],
+  "types": "dist/app/App.d.ts",
   "author": "alex-home",
   "license": "GPL-3.0-only",
   "private": true,
@@ -12,10 +15,12 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint './src/**/*.{js,mjs,cjs,ts,jsx,tsx}'",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
-    "react": "^18.3.1"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "dependencies": {
     "@tailwindcss/container-queries": "^0.1.1",
@@ -40,7 +45,6 @@
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.1",
     "eslint": "^8.57.1",
-    "eslint-config-next": "15.0.3",
     "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-react": "^7.37.3",
     "eslint-plugin-react-hooks": "^5.1.0",
@@ -52,6 +56,7 @@
     "typescript-eslint": "^8.18.2",
     "vite": "^6.0.5",
     "vite-plugin-dts": "^4.4.0",
+    "vite-plugin-lib-inject-css": "^2.2.0",
     "vite-plugin-sass": "^0.1.0"
   },
   "browserslist": [

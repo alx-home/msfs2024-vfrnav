@@ -1,17 +1,18 @@
 import { defineConfig } from "vite";
-import dts from "vite-plugin-dts";
-import react from '@vitejs/plugin-react'
-import eslint from 'vite-plugin-eslint';
+import { libInjectCss } from 'vite-plugin-lib-inject-css'
 import { peerDependencies } from "./package.json";
-import sass from 'vite-plugin-sass';
+import dts from "vite-plugin-dts";
+import eslint from 'vite-plugin-eslint';
 import path from "path";
+import react from '@vitejs/plugin-react'
+import sass from 'vite-plugin-sass';
 
 export default defineConfig({
    build: {
       lib: {
-         entry: "./src/main.tsx",
+         entry: "./src/app/App.tsx",
          name: "msfs2024-vfrnav",
-         fileName: (format) => `index.${format}.js`,
+         fileName: (format) => `App.${format}.js`,
          formats: ["cjs", "es"],
       },
       rollupOptions: {
@@ -30,6 +31,7 @@ export default defineConfig({
       dts(),
       react(),
       sass(),
-      eslint()
+      eslint(),
+      libInjectCss(),
    ],
 });

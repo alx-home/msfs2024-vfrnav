@@ -1,7 +1,5 @@
 import MouseContextProvider from '@/Events/MouseContext';
 
-import "./ol.css";
-import '@/app/page.css'
 import { MapPage } from '@/MapPage/MapPage';
 import { Menu } from '@/app/Menu';
 import { useState } from 'react';
@@ -13,6 +11,9 @@ import creditsImg from '@/images/credits.svg';
 import { CreditsPage } from '@/CreditsPage/CreditsPage';
 import { SettingsPage } from '@/SettingsPage/SettingsPage';
 import SettingsContextProvider from '@/Settings';
+
+import "./ol.css";
+import '@/global.sass';
 
 export class Page {
   public readonly type: string = 'page';
@@ -75,7 +76,7 @@ export const App = () => {
   return (
     <MouseContextProvider>
       <SettingsContextProvider>
-        <div key='home' className='Home'>
+        <div key='home' className='flex flex-row h-full'>
           <Menu pages={pages} setPage={page => setPage(page)} activePage={page} />
           {pages.map(elem => elem.elem)}
         </div>
