@@ -56,7 +56,7 @@ export const App = () => {
     new Page({
       name: "navlog",
       icon: <img src={navlogImg} alt='nav log' />,
-      elem: <div key="nvlog" />,
+      elem: <div key="navlog" />,
       disabled: true
     }),
     new Page({
