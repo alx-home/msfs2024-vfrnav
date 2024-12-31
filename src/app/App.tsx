@@ -2,7 +2,7 @@ import MouseContextProvider from '@/Events/MouseContext';
 
 import { MapPage } from '@/MapPage/MapPage';
 import { Menu } from '@/app/Menu';
-import { useState } from 'react';
+import { JSX, useState } from 'react';
 
 import mapImg from '@/images/map.svg';
 import navlogImg from '@/images/navlog.svg';

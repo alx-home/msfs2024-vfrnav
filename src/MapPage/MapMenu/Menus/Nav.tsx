@@ -148,7 +148,7 @@ const Item = ({ children, className, setDraggable }: PropsWithChildren<{
 }>) => {
    const child = useMemo(() => {
       const child = Children.only(children);
-      if (isValidElement(child)) {
+      if (isValidElement<object>(child)) {
          return {
             ...child, props: {
                ...child.props,

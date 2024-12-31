@@ -6,16 +6,20 @@
       "dom.iterable",
       "esnext"
     ],
-    "declaration": true,
-    "declarationDir": "types",
-    // "sourceMap": true,
-    // "declarationMap": false /* Create sourcemaps for d.ts files. */,
+    // "declarationDir": "types",
+    "declaration": false,
+    "sourceMap": false,
+    "declarationMap": false /* Create sourcemaps for d.ts files. */,
+    "removeComments": true,
+    "allowSyntheticDefaultImports": true,
     /* Bundler mode */
-    "moduleResolution": "bundler", // Specifies how modules are resolved when bundling.
+    "moduleResolution": "node", // Specifies how modules are resolved when bundling.
     "allowImportingTsExtensions": true, // Allows importing TypeScript files with extensions.
     "jsx": "preserve", // Configures JSX support for React.
     /* --- Bundler mode */
     "allowJs": false,
+    "rootDir": ".",
+    "baseUrl": ".",
     "skipLibCheck": true,
     /* Linting */
     "strict": true,
@@ -25,7 +29,7 @@
     "noUncheckedSideEffectImports": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "module": "esnext",
+    "module": "ES2015",
     // "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -47,7 +51,9 @@
     "src/**/*.tsx",
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "dist",
+    "tsconfig.json"
   ],
   "ts-node": {
     // "transpileOnly": true,

@@ -21,9 +21,9 @@ export const Draggable = ({ children, vertical, onOrdersChange, className, activ
    const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
    const ref = useRef<HTMLDivElement | null>(null);
    const [boundings, setBoundings] = useState<Box[]>();
-   const dragRef = useRef<HTMLDivElement | null>();
+   const dragRef = useRef<HTMLDivElement | null>(null);
 
-   const childs = useMemo(() => Children.toArray(children).filter(child => isValidElement(child)), [children]);
+   const childs = useMemo(() => Children.toArray(children).filter(child => isValidElement<{ order: number }>(child)), [children]);
    const orders = useMemo<number[]>(() => childs.map(child => child.props.order) ?? [], [childs]);
 
    const getOrder = (index: number, orders_: number[] | undefined = orders) => orders_?.[index] ?? index;
@@ -71,7 +71,7 @@ export const Draggable = ({ children, vertical, onOrdersChange, className, activ
 
    const onDragEnd = () => {
       dragRef.current?.blur()
-      dragRef.current = undefined;
+      dragRef.current = null;
       setBoundings(undefined);
    };
 

@@ -360,7 +360,7 @@ export const OlRouteLayer = ({
 
    useEffect(() => {
       if (source) {
-         const features = navData.filter(data => data.active).toSorted((left, right) => left.order - right.order).map(data => {
+         const features = navData.filter(data => data.active).sort((left, right) => left.order - right.order).map(data => {
             const feature = data.feature.clone();
             feature.setId(data.feature.getId());
             return feature;

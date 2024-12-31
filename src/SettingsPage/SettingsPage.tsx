@@ -76,10 +76,10 @@ const InputItem = ({ children, name, category, _default, pattern, className, typ
    }, [reset, setReset]);
 
    return <Item name={name} category={category} onReset={resetCallback}>
-      {childs.filter(child => isValidElement(child) ? child.props.type !== 'Error' : true)}
+      {childs.filter(child => isValidElement<{ type: string }>(child) ? child.props.type !== 'Error' : true)}
       <Input reset={reset} className={"max-w-3xl peer " + (className ?? '')} validate={validate} onChange={onChange} inputMode={inputMode} type={type} active={true} _default={_default} pattern={pattern} />
       <p className="pl-8 hidden peer-[.invalid]:flex text-red-500 text-base">
-         {childs.filter(child => isValidElement(child) && child.props.type === 'Error')}
+         {childs.filter(child => isValidElement<{ type: string }>(child) && child.props.type === 'Error')}
       </p>
    </Item>;
 }

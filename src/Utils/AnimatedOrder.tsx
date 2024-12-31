@@ -7,7 +7,7 @@ export const AnimatedOrder = ({ children, orders, itemsRef, vertical }: PropsWit
 }>) => {
    const [currentOrders, setCurrentOrders] = useState<number[]>();
    const [transforms, setTransforms] = useState<string[]>();
-   const childs = useMemo(() => Children.toArray(children).filter(child => isValidElement(child)), [children]);
+   const childs = useMemo(() => Children.toArray(children).filter(child => isValidElement<{ style: object }>(child)), [children]);
 
    const getIndex = useCallback((order: number, orders_: number[] = orders) => orders_.findIndex(value => value === order), [orders]);
 
