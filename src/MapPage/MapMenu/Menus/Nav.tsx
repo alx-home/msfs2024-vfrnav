@@ -106,7 +106,7 @@ export const NavItem = ({ name, shortName, active, setDraggable }: {
    const onEdit = useCallback(() => setEditMode(true), [setEditMode]);
    const onRemove = useCallback(() => removeNav(name), [removeNav, name]);
 
-   return <div className={'group flex flex-row grow [&>*:not(:first-child)]:hover:mx-[5px]' + (active ? ' border-l-2 border-msfs' : '')}>
+   return <div className={'group flex flex-row grow [&>*:not(:first-child)]:hover:ml-[5px]' + (active ? ' border-l-2 border-msfs' : '')}>
       <Button className={'flex flex-row grow overflow-hidden mx-2 @container/label'}
          active={!editMode}
          onClick={onClick}>
