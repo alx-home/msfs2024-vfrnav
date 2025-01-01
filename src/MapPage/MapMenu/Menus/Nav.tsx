@@ -25,7 +25,7 @@ const Label = ({ name, shortName, editMode }: {
    editMode: boolean
 }) => {
    return <div
-      className='flex flex-row px-2 pt-1 grow'
+      className='flex flex-row pt-1 grow'
       style={editMode ? { display: 'none' } : {}}>
       <div className="text-nowrap hidden @[85px]/label:flex">{name}</div>
       <div className="text-nowrap hidden @[55px]/label:flex @[85px]/label:hidden">nav: {shortName}</div>
@@ -59,7 +59,7 @@ const Input = ({ editMode, setEditMode, name }: {
       }
    }, [editMode]);
 
-   return <input className={'bg-transparent h-8 pt-1 pl-2 pointer-events-auto'} value={value} placeholder={name} ref={textArea} type="text" style={editMode ? {} : { display: 'none' }}
+   return <input className={'bg-transparent h-8 pt-[3px] pointer-events-auto'} value={value} placeholder={name} ref={textArea} type="text" style={editMode ? {} : { display: 'none' }}
       onBlur={e => {
          mapContext.editNav(name, e.currentTarget.value)
          setEditMode(false);
@@ -107,7 +107,7 @@ export const NavItem = ({ name, shortName, active, setDraggable }: {
    const onRemove = useCallback(() => removeNav(name), [removeNav, name]);
 
    return <div className={'group flex flex-row grow hover:gap-x-2' + (active ? ' border-l-2 border-msfs' : '')}>
-      <Button className={'flex flex-row grow @container/label'}
+      <Button className={'flex flex-row grow overflow-hidden mx-2 @container/label'}
          active={!editMode}
          onClick={onClick}>
          <Label name={name} shortName={shortName} editMode={editMode} />
