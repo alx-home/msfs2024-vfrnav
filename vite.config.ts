@@ -1,10 +1,10 @@
 import { defineConfig } from "vite";
-import { libInjectCss } from 'vite-plugin-lib-inject-css'
 import eslint from 'vite-plugin-eslint';
 import path from "path";
 import react from '@vitejs/plugin-react'
 import sass from 'vite-plugin-sass';
 import legacy from '@vitejs/plugin-legacy';
+import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
 
 export default defineConfig({
    build: {
@@ -12,10 +12,10 @@ export default defineConfig({
       rollupOptions: {
          output: {
             manualChunks: undefined,
-         },
+         }
       },
       ssr: false,
-      sourcemap: true,
+      sourcemap: false,
       emptyOutDir: true,
       target: 'es2017',
    },
@@ -28,10 +28,13 @@ export default defineConfig({
    plugins: [
       react(),
       sass(),
+      cssInjectedByJsPlugin(),
       eslint(),
-      libInjectCss(),
       legacy({
          targets: ['chrome <= 49']
       })
    ],
+   css: {
+      postcss: './postcss.config.mjs',
+   }
 });

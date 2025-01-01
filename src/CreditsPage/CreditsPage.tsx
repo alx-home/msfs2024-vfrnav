@@ -1,10 +1,12 @@
 import { Scroll } from "@/Utils/Scroll";
-import { PropsWithChildren, useEffect, useState } from "react";
+import { PropsWithChildren, useEffect, useMemo, useState } from "react";
+
+import copyrightImg from '@/images/copyright.svg'
 
 const Section = ({ children, title }: PropsWithChildren<{
    title: string
 }>) => {
-   return <ul className="transition transition-std flex flex-col gap-2 [&>*]:text-center hover:bg-white hover:text-slate-700 p-8 px-20 first:pt-20 last:pb-20">
+   return <ul className="group transition transition-std flex flex-col gap-2 [&>*]:text-center hover:bg-item-hocus hover:text-slate-700 p-8 px-20 first:pt-20 last:pb-20 [&>*:not(:first-child)]:flex [&>*:not(:first-child)]:flex-row [&>*:not(:first-child)]:justify-center">
       <h1 className="mb-4 text-3xl">{title}</h1>
       {children}
    </ul>;
@@ -14,6 +16,7 @@ export const CreditsPage = ({ active }: {
    active: boolean
 }) => {
    const [opacity, setOpacity] = useState(' opacity-0');
+   const copyright = useMemo(() => <div className="mr-[2px]"><img src={copyrightImg} alt="copyright" className="w-[9px] group-hover:invert transition-all" /></div>, []);
 
    useEffect(() => {
       if (active) {
@@ -30,15 +33,15 @@ export const CreditsPage = ({ active }: {
          <Scroll>
             <Section title='OpenLayer'>
                <li>
-                  © <a href="https://github.com/openlayers/openlayers/blob/main/LICENSE.md" target="_blank" rel="noreferrer">openlayers</a>.
+                  {copyright}<div><a href="https://github.com/openlayers/openlayers/blob/main/LICENSE.md" target="_blank" rel="noreferrer">openlayers</a>.</div>
                </li>
             </Section>
             <Section title='OpenLayer Layers'>
                <li>
-                  © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> contributors.
+                  {copyright}<div><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> contributors.</div>
                </li>
                <li>
-                  © 2024 Microsoft Corporation.
+                  2024 Microsoft Corporation.
                </li>
                <li>
                   Microsoft <a className="ol-attribution-bing-tos" href="https://www.microsoft.com/maps/product/terms.html" target="_blank" rel="noreferrer">Terms of Use</a>.
@@ -47,12 +50,12 @@ export const CreditsPage = ({ active }: {
                   Earthstar Geographics  SIO.
                </li>
                <li>
-                  © 2024 TomTom.
+                  {copyright}<div>2024 TomTom.</div>
                </li>
             </Section>
             <Section title='MSFS2024 VFRNav'>
                <li>
-                  © <a href="https://github.com/alx-home/msfs2024-vfrnav/blob/master/LICENSE" target="_blank" rel="noreferrer">MSFS2024 VFRNav&apos;</a>.
+                  {copyright}<div><a href="https://github.com/alx-home/msfs2024-vfrnav/blob/master/LICENSE" target="_blank" rel="noreferrer">MSFS2024 VFRNav&apos;</a>.</div>
                </li>
             </Section>
          </Scroll>
