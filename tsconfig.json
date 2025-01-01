@@ -29,7 +29,7 @@
     "noUncheckedSideEffectImports": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "module": "ES2015",
+    "module": "esnext",
     // "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,

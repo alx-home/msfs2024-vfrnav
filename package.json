@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "lightningcss": "^1.28.2",
+    "mobile-drag-drop": "^3.0.0-rc.0",
     "ol": "^10.3.1",
     "pixrem": "^5.0.0",
     "postcss-color-rgb": "^2.0.0",

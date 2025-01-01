@@ -109,7 +109,8 @@ export const Draggable = ({ children, vertical, onOrdersChange, className, activ
       onDragOver={e => {
          e.preventDefault();
          onDrag(vertical ? e.pageY : e.pageX);
-      }}>
+      }}
+      onDragEnter={(e) => { e.preventDefault(); }}>
       <AnimatedOrder orders={orders} itemsRef={itemsRef} vertical={vertical}>
          {
             childs.map((child, index) => {
