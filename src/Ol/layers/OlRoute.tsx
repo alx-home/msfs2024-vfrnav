@@ -301,17 +301,19 @@ export const OlRouteLayer = ({
 
                         const geoDistance = (getLength((new LineString([geoCoords[0][index], geoCoords[0][index + 1]]))) * 0.0005399568);
                         const text = mag.toFixed(0) + "\u00b0 " + geoDistance.toFixed(0) + " nm  " + (geoDistance * 60 / settings.speed).toFixed(0) + "'";
-                        context.font = "900 " + Math.min(distance * 2 / text.length, 24).toFixed(0) + "px Inter, sans-serif";
+                        const maxSize = 50;//@todo parameter (24 web)
+                        context.font = "900 "/* @todo parameter 900 web */ + Math.min(distance * 2 / text.length - 5 /* @todo parameter */, maxSize).toFixed(0) + "px Inter, sans-serif";
 
                         const center = [(coord[0] + nextCoord[0]) / 2, (coord[1] + nextCoord[1]) / 2];
                         context.save();
-                        context.fillStyle = 'rgba(31, 41, 55, 0.5)';
-                        context.strokeStyle = 'rgba(255, 255, 255, 0.5)';
-                        context.lineWidth = 1;
+                        context.fillStyle = 'rgba(31, 41, 55, 1.0)';//@todo parameter
                         context.textAlign = "center";
                         context.translate(center[0], center[1]);
                         context.rotate(angle);
-                        context.translate(0, -5);
+                        context.translate(0, -8);
+                        context.strokeStyle = 'rgba(31, 41, 55, 1.0)';//@todo degree msfs
+                        context.lineWidth = 10;
+                        context.strokeStyle = 'rgba(255, 255, 255, 1.0)';//@todo degree msfs
                         context.strokeText(text, 0, 0);
                         context.fillText(text, 0, 0);
                         context.restore();
