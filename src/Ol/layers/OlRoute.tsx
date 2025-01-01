@@ -300,13 +300,13 @@ export const OlRouteLayer = ({
                         const distance = Math.sqrt(vector[0] * vector[0] + vector[1] * vector[1]);
 
                         const geoDistance = (getLength((new LineString([geoCoords[0][index], geoCoords[0][index + 1]]))) * 0.0005399568);
-                        const text = mag.toFixed(0) + "°  " + geoDistance.toFixed(0) + " nm  " + (geoDistance * 60 / settings.speed).toFixed(0) + "'";
-                        context.font = Math.min(distance * 2 / text.length, 24).toFixed(0) + "px Inter, sans-serif";
+                        const text = mag.toFixed(0) + "\u00b0 " + geoDistance.toFixed(0) + " nm  " + (geoDistance * 60 / settings.speed).toFixed(0) + "'";
+                        context.font = "900 " + Math.min(distance * 2 / text.length, 24).toFixed(0) + "px Inter, sans-serif";
 
                         const center = [(coord[0] + nextCoord[0]) / 2, (coord[1] + nextCoord[1]) / 2];
                         context.save();
-                        context.fillStyle = '#1f2937';
-                        context.strokeStyle = 'white';
+                        context.fillStyle = 'rgba(31, 41, 55, 0.5)';
+                        context.strokeStyle = 'rgba(255, 255, 255, 0.5)';
                         context.lineWidth = 1;
                         context.textAlign = "center";
                         context.translate(center[0], center[1]);
