@@ -52,24 +52,22 @@ const Input = ({ editMode, setEditMode, name }: {
 }) => {
    const mapContext = useContext(MapContext)!;
    const textArea = useRef<HTMLInputElement | null>(null);
+   const [value, setValue] = useState(name);
    useEffect(() => {
       if (editMode) {
          textArea.current?.focus()
       }
    }, [editMode]);
-   const [value, setValue] = useState(name);
 
-   return <input className={'bg-transparent h-8 pt-1 pl-2 pointer-events-auto'} ref={textArea} value={value} style={editMode ? {} : { display: 'none' }}
-      onBlur={() => {
-         mapContext.editNav(name, value)
+   return <input className={'bg-transparent h-8 pt-1 pl-2 pointer-events-auto'} value={value} placeholder={name} ref={textArea} type="text" style={editMode ? {} : { display: 'none' }}
+      onBlur={e => {
+         mapContext.editNav(name, e.currentTarget.value)
          setEditMode(false);
       }}
-      onChange={() => { }}
+      onChange={e => setValue(e.target.value)}
       onKeyUp={e => {
-         setValue(e.currentTarget.value);
-
          if (e.key === 'Escape' || e.key === 'Enter') {
-            mapContext.editNav(name, value);
+            mapContext.editNav(name, e.currentTarget.value);
             setEditMode(false);
          }
       }}
