@@ -1,5 +1,5 @@
 import useMouseRelease from '@/Events/MouseRelease';
-import { PropsWithChildren, useRef, useEffect, useState, CSSProperties, useCallback } from 'react';
+import { PropsWithChildren, useRef, useEffect, useState, CSSProperties, useCallback, useMemo } from 'react';
 import useMouseDrag from '@/Events/MouseDrag';
 
 export const Scroll = ({ children, className, style }: PropsWithChildren<{
@@ -10,7 +10,8 @@ export const Scroll = ({ children, className, style }: PropsWithChildren<{
    const [lastPos, setLastPos] = useState<{ x: number, y: number }>();
    const [visible, setVisible] = useState(0);
    const [selectable, setSelectable] = useState(true);
-   const mousePosition = useMouseDrag(lastPos !== undefined);
+   const useDrag = useMemo(() => lastPos !== undefined, [lastPos]);
+   const mousePosition = useMouseDrag(useDrag);
    const mouseUp = useMouseRelease();
    const ref = useRef<HTMLDivElement | null>(null);
 

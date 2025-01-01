@@ -1,5 +1,5 @@
 
-import { Children, Dispatch, isValidElement, MouseEventHandler, PropsWithChildren, SetStateAction, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { Children, Dispatch, isValidElement, MouseEventHandler, PropsWithChildren, SetStateAction, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Feature } from 'ol';
 import VectorLayer from 'ol/layer/Vector';
@@ -82,7 +82,7 @@ export const NavItem = ({ name, shortName, active, setDraggable }: {
    shortName: string,
    setDraggable?: Dispatch<SetStateAction<boolean>>
 }) => {
-   const mapContext = useContext(MapContext)!;
+   const { setNavData, removeNav } = useContext(MapContext)!;
    const [editMode, setEditMode] = useState(false);
    const [hover, setHover] = useState(false);
    const [focused, setFocused] = useState(false);
@@ -99,19 +99,23 @@ export const NavItem = ({ name, shortName, active, setDraggable }: {
       }
    }, [editMode, setDraggable])
 
+   const onClick = useCallback(() => setNavData(navData => {
+      const newData = [...navData];
+      const elem = newData.find(e => e.name === name);
+      if (elem) {
+         elem.active = !active;
+      }
+      return newData;
+   }), [active, name, setNavData]);
+   const onEdit = useCallback(() => setEditMode(true), [setEditMode]);
+   const onRemove = useCallback(() => removeNav(name), [removeNav, name]);
+
    return <div className={'flex flex-row grow hover:gap-x-2' + (active ? ' border-l-2 border-msfs' : '')}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}>
       <Button className={'flex flex-row grow @container/label'}
          active={!editMode}
-         onClick={() => mapContext.setNavData(navData => {
-            const newData = [...navData];
-            const elem = newData.find(e => e.name === name);
-            if (elem) {
-               elem.active = !active;
-            }
-            return newData;
-         })}>
+         onClick={onClick}>
          <Label name={name} shortName={shortName} editMode={editMode} />
          <Input editMode={editMode} setEditMode={setEditMode} name={name} />
       </Button>
@@ -120,8 +124,8 @@ export const NavItem = ({ name, shortName, active, setDraggable }: {
          onFocus={() => setFocused(true)}
          onBlur={() => setFocused(false)}
       >
-         <Edit onClick={() => setEditMode(true)} image={editImg} alt='edit' background='bg-msfs' hidden={!(hover || focused)} />
-         <Edit onClick={() => mapContext.removeNav(name)} image={deleteImg} alt='delete' background='bg-red-600' hidden={!(hover || focused)} />
+         <Edit onClick={onEdit} image={editImg} alt='edit' background='bg-msfs' hidden={!(hover || focused)} />
+         <Edit onClick={onRemove} image={deleteImg} alt='delete' background='bg-red-600' hidden={!(hover || focused)} />
       </div>
    </div>;
 };
@@ -133,7 +137,9 @@ const Add = ({ name, image, onClick, disabled, active }: PropsWithChildren<{
    disabled?: boolean,
    active?: boolean
 }>) => {
-   return <Button onClick={onClick} active={active ?? true} disabled={disabled ?? false} className='px-2 min-h-8 pt-1 flex flex-row grow @container'>
+   const isActive = useMemo(() => active ?? true, [active]);
+   const isDisabled = useMemo(() => disabled ?? false, [disabled]);
+   return <Button onClick={onClick} active={isActive} disabled={isDisabled} className='px-2 min-h-8 pt-1 flex flex-row grow @container'>
       <div className='hidden @[47px]:flex'>{name}</div>
       <div className='flex grow justify-center @[47px]:hidden'>
          <img src={image} alt={name} className='invert' />
@@ -163,15 +169,22 @@ const Item = ({ children, className, setDraggable }: PropsWithChildren<{
 };
 
 export const Nav = ({ children }: PropsWithChildren<unknown>) => {
-   const mapContext = useContext(MapContext)!;
-   const key = mapContext.navData.reduce((prev, elem) => { return prev + ";" + elem.name; }, "");
+   const { addNav, navData, reorderNav } = useContext(MapContext)!;
+   const key = navData.reduce((prev, elem) => { return prev + ";" + elem.name; }, "");
    const [draggable, setDraggable] = useState(true);
    const childs = useMemo(() => Children.toArray(children).filter(child => isValidElement(child)).map((child, index) => {
-      return <Item key={mapContext.navData[index].id} order={mapContext.navData[index].order} className='flex gap-x-4' setDraggable={setDraggable}>
+      return <Item key={navData[index].id} order={navData[index].order} className='flex gap-x-4' setDraggable={setDraggable}>
          {child}
       </Item>
    })
-      , [children, mapContext.navData]);
+      , [children, navData]);
+   
+   const onAdd = useCallback(() => addNav?.(), [addNav]);
+   const noop = useCallback(() => { }, []);
+
+   const onOrdersChange = useMemo(() => (orders: number[]) => {
+      reorderNav(orders);
+   }, [reorderNav]);
 
    return <>
       <div className="flex min-h-12 shrink-0 items-center justify-between ps-1 text-2xl font-semibold">
@@ -181,17 +194,15 @@ export const Nav = ({ children }: PropsWithChildren<unknown>) => {
          <Draggable key={key} className={'@container flex flex-col w-full overflow-hidden gap-y-2'}
             vertical={true}
             active={draggable}
-            onOrdersChange={(orders: number[]) => {
-               mapContext.reorderNav(orders);
-            }}
+            onOrdersChange={onOrdersChange}
          >
             {childs}
          </Draggable>
          <div className='flex gap-x-4 mt-2'>
-            <Add name='Add' image={newFileImg} onClick={() => mapContext.addNav?.()} />
-            <Add name='Import' image={importImg} disabled={true} onClick={() => { }} />
+            <Add name='Add' image={newFileImg} onClick={onAdd} />
+            <Add name='Import' image={importImg} disabled={true} onClick={noop} />
          </div>
-         <Add name='Export' image={exportImg} disabled={true} onClick={() => { }} />
+         <Add name='Export' image={exportImg} disabled={true} onClick={noop} />
       </menu>
    </>
 };

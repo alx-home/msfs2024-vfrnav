@@ -1,4 +1,4 @@
-import { Dispatch, KeyboardEvent, SetStateAction, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { Dispatch, KeyboardEvent, SetStateAction, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import useMouseRelease from '@/Events/MouseRelease';
 import { MouseContext } from '@/Events/MouseContext';
 import { Layer, Layers, OnLayerChange } from './Menus/Layers';
@@ -18,11 +18,11 @@ export const MapMenu = ({ open, setOpen, menu, layers, onLayerChange }: {
    layers: Layer[],
    onLayerChange: OnLayerChange,
 }) => {
-   const closeWidth = 40;
-   const minWidth = 120;
-   const maxWidth = 250;
+   const closeWidth = useMemo(() => 40, []);
+   const minWidth = useMemo(() => 120, []);
+   const maxWidth = useMemo(() => 250, []);
 
-   const mapContext = useContext(MapContext)!;
+   const { navData } = useContext(MapContext)!;
    const [initialDelta, setInitialDelta] = useState<number | undefined>();
    const [width, setWidth] = useState(0);
    const [defaultWidth, setDefaultWidth] = useState(minWidth);
@@ -35,10 +35,16 @@ export const MapMenu = ({ open, setOpen, menu, layers, onLayerChange }: {
    const mouseUp = useMouseRelease();
    const { cursorChangeHandler } = useContext(MouseContext);
 
-   const onDragStart = (mouseX: number) => {
+   const childs = useMemo(() =>
+      navData.map((item) =>
+         <NavItem key={item.id} active={item.active} name={item.name} shortName={item.shortName} />
+      )
+      , [navData]);
+
+   const onDragStart = useCallback((mouseX: number) => {
       setInitialDelta(width + mouseX);
       setOpen(width > 0);
-   };
+   }, [setOpen, width]);
 
    const onDragEnd = useCallback(() => {
       handleRef.current?.blur();
@@ -72,13 +78,13 @@ export const MapMenu = ({ open, setOpen, menu, layers, onLayerChange }: {
       }
    }, [initialDelta, updateWidth]);
 
-   const handleKey = (e: KeyboardEvent<HTMLDivElement>) => {
+   const handleKey = useCallback((e: KeyboardEvent<HTMLDivElement>) => {
       if (e.key === "ArrowLeft") {
          updateWidth(width + 10);
       } else if (e.key === "ArrowRight") {
          updateWidth(width - 10);
       }
-   };
+   }, [updateWidth, width]);
 
    useEffect(() => {
       if (mousePosition) {
@@ -134,11 +140,7 @@ export const MapMenu = ({ open, setOpen, menu, layers, onLayerChange }: {
          style={{ width: width, ...(width > 0 ? {} : { display: 'none' }) }}>
          {menu === Menu.layers ?
             <Layers layers={layers} onLayerChange={onLayerChange} /> :
-            <Nav>
-               {mapContext.navData.map((item) =>
-                  <NavItem key={item.id} active={item.active} name={item.name} shortName={item.shortName} />
-               )}
-            </Nav>}
+            <Nav>{childs}</Nav>}
       </Scroll>
    </>
 };
