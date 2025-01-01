@@ -6,7 +6,7 @@ import copyrightImg from '@/images/copyright.svg'
 const Section = ({ children, title }: PropsWithChildren<{
    title: string
 }>) => {
-   return <ul className="group transition transition-std flex flex-col gap-2 [&>*]:text-center hover:bg-item-hocus hover:text-slate-700 p-8 px-20 first:pt-20 last:pb-20 [&>*:not(:first-child)]:flex [&>*:not(:first-child)]:flex-row [&>*:not(:first-child)]:justify-center">
+   return <ul className="group transition transition-std flex flex-col [&>*:not(:first-child)]:mt-[6px] [&>*]:text-center hover:bg-item-hocus hover:text-slate-700 p-8 px-20 first:pt-20 last:pb-20 [&>*:not(:first-child)]:flex [&>*:not(:first-child)]:flex-row [&>*:not(:first-child)]:justify-center">
       <h1 className="mb-4 text-3xl">{title}</h1>
       {children}
    </ul>;

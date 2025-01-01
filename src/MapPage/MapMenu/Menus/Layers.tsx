@@ -50,7 +50,7 @@ export const Layers = ({ layers, onLayerChange }: { layers: Layer[], onLayerChan
       <div className="flex min-h-12 shrink-0 items-center justify-between ps-1 text-2xl font-semibold">
          Layers
       </div>
-      <Draggable className='@container flex flex-col p-4 gap-2 w-full'
+      <Draggable className='@container flex flex-col p-4 [&>*:not(:first-child)]:mt-[7px] w-full'
          vertical={true}
          onOrdersChange={(orders: number[]) => {
             onLayerChange(orders.map((order, index) => ({ index: index, order: order })));

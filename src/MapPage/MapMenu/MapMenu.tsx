@@ -135,8 +135,8 @@ export const MapMenu = ({ open, setOpen, menu, layers, onLayerChange }: {
          className='select-none transition-std transition-colors w-2 bg-slate-900 hocus:bg-msfs' />
 
       <Scroll className={'overflow-hidden shrink-0 border-l border-gray-700 pointer-events-auto flex'
-         + ' flex-col gap-y-2.5 bg-gray-800 text-center text-white'
-         + (width > 0 ? ' p-3' : '')}
+         + ' flex-col [&>*:not(:first-child)]:mt-[7px] bg-gray-800 text-center text-white'
+         + (width > 0 ? ' p-3 pt-[25px]' : '')}
          style={{ width: width, ...(width > 0 ? {} : { display: 'none' }) }}>
          {menu === Menu.layers ?
             <Layers layers={layers} onLayerChange={onLayerChange} /> :
