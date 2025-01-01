@@ -48,7 +48,7 @@ const Item = ({ children, name, category, className, onReset }: PropsWithChildre
    </div>;
 }
 
-const Error = ({ children }: PropsWithChildren<{
+const ErrorMessage = ({ children }: PropsWithChildren<{
    type: string
 }>) => {
    return children;
@@ -146,17 +146,19 @@ export const SettingsPage = ({ active }: {
                   <div>
                      Set the cruise speed of the aircraft. Leg duration will be calculated on belief of this settings.
                   </div>
-                  <Error type='Error'>
+                  <ErrorMessage type='Error'>
                      Please enter a numerical value !
-                  </Error>
+                  </ErrorMessage>
                </InputItem>
             </Group>
             <Group name="Navigation">
                <CheckItem category="Wind correction" name="Heading" _default={true} _onChange={settings.setAdjustHeading}>
-                  Adjust navigation heading by taking into account the given leg wind.
+                  Adjust navigation heading by taking into account the given leg wind.<br />
+                  (not yet implemented)
                </CheckItem>
                <CheckItem category="Wind correction" name="Time" _default={true} _onChange={settings.setAdjustTime}>
-                  Adjust navigation time by taking into account the given leg wind.
+                  Adjust navigation time by taking into account the given leg wind.<br />
+                  (not yet implemented)
                </CheckItem>
             </Group>
          </List>
