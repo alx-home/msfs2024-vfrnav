@@ -1,8 +1,8 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { App } from './app/App.tsx'
-import { polyfill } from "mobile-drag-drop"
 
+import { polyfill } from './drag-events';
 import './pointer-events';
 
 if (!globalThis.PointerEvent) {
@@ -36,7 +36,7 @@ if (!globalThis.PointerEvent) {
 
 // options are optional ;)
 polyfill({
-  forceApply: true
+  // holdToDrag: 1000 @todo
 });
 
 import './global.sass';
