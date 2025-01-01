@@ -106,14 +106,14 @@ export const NavItem = ({ name, shortName, active, setDraggable }: {
    const onEdit = useCallback(() => setEditMode(true), [setEditMode]);
    const onRemove = useCallback(() => removeNav(name), [removeNav, name]);
 
-   return <div className={'group flex flex-row grow hover:gap-x-2' + (active ? ' border-l-2 border-msfs' : '')}>
+   return <div className={'group flex flex-row grow [&>*:not(:first-child)]:hover:mx-[5px]' + (active ? ' border-l-2 border-msfs' : '')}>
       <Button className={'flex flex-row grow overflow-hidden mx-2 @container/label'}
          active={!editMode}
          onClick={onClick}>
          <Label name={name} shortName={shortName} editMode={editMode} />
          <Input editMode={editMode} setEditMode={setEditMode} name={name} />
       </Button>
-      <div className={'transition duration-std flex flex-row gap-2 overflow-hidden max-w-24 h-11 mt-auto mb-auto w-0 group-hocus:w-full'}
+      <div className={'transition duration-std flex flex-row [&>*:not(:first-child)]:ml-[5px] overflow-hidden max-w-24 h-11 mt-auto mb-auto w-0 group-hocus:w-full'}
          style={{ display: (editMode ? 'none' : ''), transitionProperty: 'width' }}
       >
          <Edit onClick={onEdit} image={editImg} alt='edit' background='bg-msfs' />
