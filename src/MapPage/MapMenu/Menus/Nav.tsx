@@ -33,14 +33,14 @@ const Label = ({ name, shortName, editMode }: {
    </div>;
 };
 
-const Edit = ({ onClick, image, alt, background, hidden }: {
+const Edit = ({ onClick, image, alt, background }: {
    onClick: MouseEventHandler<HTMLButtonElement>,
    image: string,
    alt: string,
-   background: string,
-   hidden: boolean
+   background: string
 }) => {
-   return <button className={'flex w-11 h-11 hover:brightness-125 focus:border-2 focus:border-with ' + ' ' + background + (hidden ? ' overflow-hidden hidden' : '')} onClick={onClick}>
+   return <button className={'flex w-11 h-11 hover:brightness-125 focus:border-2 focus:border-with ' + ' ' + background}
+      onClick={onClick}>
       <img className='w-8 h-8 grow mt-auto mb-auto justify-center' src={image} alt={alt} />
    </button>;
 };
@@ -84,8 +84,6 @@ export const NavItem = ({ name, shortName, active, setDraggable }: {
 }) => {
    const { setNavData, removeNav } = useContext(MapContext)!;
    const [editMode, setEditMode] = useState(false);
-   const [hover, setHover] = useState(false);
-   const [focused, setFocused] = useState(false);
 
    useEffect(() => {
       return () => setDraggable?.(true);
@@ -110,22 +108,18 @@ export const NavItem = ({ name, shortName, active, setDraggable }: {
    const onEdit = useCallback(() => setEditMode(true), [setEditMode]);
    const onRemove = useCallback(() => removeNav(name), [removeNav, name]);
 
-   return <div className={'flex flex-row grow hover:gap-x-2' + (active ? ' border-l-2 border-msfs' : '')}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}>
+   return <div className={'group flex flex-row grow hover:gap-x-2' + (active ? ' border-l-2 border-msfs' : '')}>
       <Button className={'flex flex-row grow @container/label'}
          active={!editMode}
          onClick={onClick}>
          <Label name={name} shortName={shortName} editMode={editMode} />
          <Input editMode={editMode} setEditMode={setEditMode} name={name} />
       </Button>
-      <div className={'transition duration-std flex flex-row gap-2 overflow-hidden max-w-24 h-11 mt-auto mb-auto ' + ((hover || focused) ? 'w-full' : 'w-0')}
+      <div className={'transition duration-std flex flex-row gap-2 overflow-hidden max-w-24 h-11 mt-auto mb-auto w-0 group-hocus:w-full'}
          style={{ display: (editMode ? 'none' : ''), transitionProperty: 'width' }}
-         onFocus={() => setFocused(true)}
-         onBlur={() => setFocused(false)}
       >
-         <Edit onClick={onEdit} image={editImg} alt='edit' background='bg-msfs' hidden={!(hover || focused)} />
-         <Edit onClick={onRemove} image={deleteImg} alt='delete' background='bg-red-600' hidden={!(hover || focused)} />
+         <Edit onClick={onEdit} image={editImg} alt='edit' background='bg-msfs' />
+         <Edit onClick={onRemove} image={deleteImg} alt='delete' background='bg-red-600' />
       </div>
    </div>;
 };
@@ -178,7 +172,7 @@ export const Nav = ({ children }: PropsWithChildren<unknown>) => {
       </Item>
    })
       , [children, navData]);
-   
+
    const onAdd = useCallback(() => addNav?.(), [addNav]);
    const noop = useCallback(() => { }, []);
 
