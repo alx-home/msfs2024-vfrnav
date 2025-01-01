@@ -3,7 +3,9 @@ import { createRoot } from 'react-dom/client'
 import { App } from './app/App.tsx'
 
 import { polyfill } from './drag-events';
+import './drag-events/default.css';
 import './pointer-events';
+
 
 if (!globalThis.PointerEvent) {
 

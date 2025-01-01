@@ -533,8 +533,18 @@ var DragOperationController = (function () {
         event.preventDefault();
         this._dragOperationState = (event.type === "pointercancel") ? 3 : 2;
     };
-    DragOperationController.prototype._dragAndDropProcessModelIteration = function () {
+    DragOperationController.prototype._cancelDrag = function () {
         var _this = this;
+        var dragFailed = this._dragOperationEnded(this._dragOperationState);
+        if (dragFailed) {
+            applyDragImageSnapback(this._sourceNode, this._dragImage, this._dragImageTransforms, function () {
+                _this._finishDragOperation();
+            });
+            return;
+        }
+        this._finishDragOperation();
+    };
+    DragOperationController.prototype._dragAndDropProcessModelIteration = function () {
         var previousDragOperation = this._currentDragOperation;
         this._dragDataStore.mode = 3;
         this._dataTransfer.dropEffect = DROP_EFFECTS[0];
@@ -542,15 +552,9 @@ var DragOperationController = (function () {
         if (dragCancelled) {
             this._currentDragOperation = DROP_EFFECTS[0];
         }
+
         if (dragCancelled || this._dragOperationState === 2 || this._dragOperationState === 3) {
-            var dragFailed = this._dragOperationEnded(this._dragOperationState);
-            if (dragFailed) {
-                applyDragImageSnapback(this._sourceNode, this._dragImage, this._dragImageTransforms, function () {
-                    _this._finishDragOperation();
-                });
-                return;
-            }
-            this._finishDragOperation();
+            this._cancelDrag();
             return;
         }
         var newUserSelection = this._config.elementFromPoint(this._currentHotspotCoordinates.x, this._currentHotspotCoordinates.y);
@@ -645,8 +649,9 @@ var config = {
 var activeDragOperation;
 function onTouchstart(e) {
     if (activeDragOperation) {
-        activeDragOperation = undefined;
+        activeDragOperation._cancelDrag();
     }
+
     var dragTarget = config.tryFindDraggableTarget(e);
     if (!dragTarget) {
         return;
@@ -661,18 +666,22 @@ function onTouchstart(e) {
 }
 
 function onDelayTouchstart(evt) {//@todo
+    if (activeDragOperation) {
+        dragOperationEnded(config, e, 3);
+    }
+
     var el = evt.target;
     var heldItem = function () {
         end.off();
         cancel.off();
-        // move.off();
+        move.off();
         scroll.off();
         onTouchstart(evt);
     };
     var onReleasedItem = function () {
         end.off();
         cancel.off();
-        // move.off();
+        move.off();
         scroll.off();
         if (el) {
             el.dispatchEvent(new CustomEvent(EVENT_DRAG_DRAGSTART_CANCEL, { bubbles: true, cancelable: true }));
@@ -685,9 +694,10 @@ function onDelayTouchstart(evt) {//@todo
     var timer = window.setTimeout(heldItem, config.holdToDrag);
     var end = onEvt(el, "pointerend", onReleasedItem);
     var cancel = onEvt(el, "pointercancel", onReleasedItem);
-    // var move = onEvt(el, "pointermove", onReleasedItem);
+    var move = onEvt(el, "pointermove", onReleasedItem);
     var scroll = onEvt(window, "scroll", onReleasedItem, true);
 }
+
 function dragOperationEnded(_config, event, state) {
     if (state === 0) {
         if (_config.defaultActionOverride) {
