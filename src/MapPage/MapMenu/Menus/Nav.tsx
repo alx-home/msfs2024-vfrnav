@@ -27,9 +27,13 @@ const Label = ({ name, shortName, editMode }: {
    return <div
       className='flex flex-row pt-1 grow'
       style={editMode ? { display: 'none' } : {}}>
+      {/*
       <div className="text-nowrap hidden @[85px]/label:flex">{name}</div>
       <div className="text-nowrap hidden @[55px]/label:flex @[85px]/label:hidden">nav: {shortName}</div>
       <div className="text-nowrap flex @[55px]/label:hidden">{shortName}</div>
+       */}
+      <div className="text-nowrap flex group-hocus:hidden">{name}</div>
+      <div className="text-nowrap hidden group-hocus:flex">{shortName}</div>
    </div>;
 };
 
