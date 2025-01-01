@@ -645,7 +645,7 @@ var config = {
 var activeDragOperation;
 function onTouchstart(e) {
     if (activeDragOperation) {
-        return;
+        activeDragOperation = undefined;
     }
     var dragTarget = config.tryFindDraggableTarget(e);
     if (!dragTarget) {
