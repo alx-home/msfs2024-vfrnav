@@ -30,7 +30,7 @@ For buying me a coffee in order to fullfill my energie gauge :
 
 ## Wiki
 
-https://github.com/alx-home/msfs2024-vfrnav/wiki
+https://github.com/alx-home/msfs2024-vfrnav-efb/wiki
 <br>
 <br> 
 
