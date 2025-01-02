@@ -34,6 +34,11 @@ https://github.com/alx-home/msfs2024-vfrnav/wiki
 <br>
 <br> 
 
+## EFB Integration
+https://github.com/alx-home/msfs2024-vfrnav-efb
+<br>
+<br> 
+
 ## Credits / Crédits
 
 ### OpenLayers 
