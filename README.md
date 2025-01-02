@@ -1,3 +1,5 @@
+[<img src="https://liberapay.com/assets/widgets/donate.svg">](https://liberapay.com/alex-home/donate) \
+[<img src="https://img.shields.io/liberapay/goal/alex-home.svg?logo=liberapay">](https://liberapay.com/alex-home/donate) 
 # <p align="center">VFR tools for Flight Simulator 2024 EFB / Outils de VFR pour Microsoft Flight Simulator 2024</p>
 <br>
 <br> 
@@ -17,7 +19,7 @@ This is a pluggin for Microsoft simulator 2024 embeded EFB to retrieve what whas
 <br>
 <br> 
 
-![demo](https://github.com/user-attachments/assets/d52f3cd8-213a-48b4-a0e0-20eb25aed108) 
+![demo](https://github.com/user-attachments/assets/ac67060b-d26c-40d1-b385-e11fa8e43bbc) 
 
 Pour me payer un petit caffé afin de me redonner de l'énergie : \
 For buying me a coffee in order to fullfill my energie gauge :
@@ -26,9 +28,9 @@ For buying me a coffee in order to fullfill my energie gauge :
 [<img src="https://img.shields.io/liberapay/goal/alex-home.svg?logo=liberapay">](https://liberapay.com/alex-home/donate) 
 
 
-## Getting Started / Pour bien démarrer
+## Wiki
 
-@todo
+https://github.com/alx-home/msfs2024-vfrnav/wiki
 <br>
 <br> 
 
